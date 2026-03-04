@@ -12,7 +12,7 @@ public class JunkieKartPlayers implements EntityFactory {
     @Spawns("Player1")
     public Entity newPlayer(SpawnData data) {
         return FXGL.entityBuilder(data)
-                .view(new Rectangle(60, 80, javafx.scene.paint.Color.RED))
+                .view(new Rectangle(40, 60, javafx.scene.paint.Color.RED))
                 .anchorFromCenter()
                 .with(new CarControlComponent())
                 .build();

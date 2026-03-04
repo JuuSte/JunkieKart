@@ -10,7 +10,7 @@ public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
     private double maxSpeed = 10;
-    private double acceleration = 0.19;
+    private double acceleration = 0.5;
     private double turnSpeed = 5; // degrees per frame scaled by speed
     private double drift = 0.95;
 
@@ -59,8 +59,10 @@ public class CarControlComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        // Rotate based only on input, not speed sign
-        double rotationAmount = turnSpeed * (Math.abs(currentSpeed) / maxSpeed);
+        // Preserve speed sign so reverse turning mirrors forward turning
+        double speedFactor = currentSpeed / maxSpeed; // ranges from -1/3 to 1.0
+        double rotationAmount = turnSpeed * speedFactor; // signed!
+
         if (turnLeft)  entity.rotateBy(-rotationAmount);
         if (turnRight) entity.rotateBy(rotationAmount);
 
