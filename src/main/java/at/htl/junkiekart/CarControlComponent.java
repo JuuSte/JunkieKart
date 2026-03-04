@@ -10,12 +10,17 @@ public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
     private double maxSpeed = 10;
-    private double acceleration = 0.5;
+    private double acceleration = 1;
     private double turnSpeed = 5; // degrees per frame scaled by speed
     private double drift = 0.95;
+    private double friction = 0.93; //darf nicht >= 1 sein
+
+    private double dx = 0;
+    private double dy = 0;
 
     private boolean turnLeft = false;
     private boolean turnRight = false;
+    private boolean drifting = false;
 
     @Override
     public void onAdded() {
@@ -55,6 +60,13 @@ public class CarControlComponent extends Component {
             @Override
             protected void onActionEnd() { turnRight = false; }
         }, KeyCode.D);
+
+        getInput().addAction(new UserAction("Drift") {
+            @Override
+            protected void onActionBegin() { drifting = true; }
+            @Override
+            protected void onActionEnd() { drifting = false; }
+        }, KeyCode.SPACE);
     }
 
     @Override
@@ -66,13 +78,17 @@ public class CarControlComponent extends Component {
         if (turnLeft)  entity.rotateBy(-rotationAmount);
         if (turnRight) entity.rotateBy(rotationAmount);
 
-        // Move forward/backward in direction facing
         double angleRad = Math.toRadians(entity.getRotation());
-        double dx = Math.sin(angleRad) * currentSpeed;
-        double dy = -Math.cos(angleRad) * currentSpeed;
+        if(drifting){
+            dx = dx * (1 - drift) + entity.getRotation() * drift;
+            dy = dy * (1 - drift) + entity.getRotation() * drift;
+        }else{
+            dx = Math.cos(angleRad) * currentSpeed;
+            dy = -Math.sin(angleRad) * currentSpeed;
+        }
         entity.translate(dx, dy);
 
         // Apply friction
-        currentSpeed *= drift;
+        currentSpeed *= friction;
     }
 }
