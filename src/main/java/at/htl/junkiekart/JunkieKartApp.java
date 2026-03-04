@@ -26,7 +26,6 @@ public class JunkieKartApp extends GameApplication {
         FXGL.spawn("Player1", 400, 300);
 
     }
-
     public static void main(String[] args) {
         launch(args);
     }
