@@ -12,8 +12,8 @@ public class JunkieKartApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Junkie Kart");
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
 
         settings.setMainMenuEnabled(true);      // Menü aktivieren
         settings.setSceneFactory(new JunkieKartSceneFactory());
