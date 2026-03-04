@@ -15,16 +15,20 @@ public class JunkieKartApp extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
 
-        settings.setMainMenuEnabled(true);      // Menü aktivieren
+        settings.setMainMenuEnabled(true);    //Menü aktivieren
         settings.setSceneFactory(new JunkieKartSceneFactory());
     }
 
     @Override
     protected void initGame() {
+        LoadingScreen loading = new LoadingScreen(() -> {
+            FXGL.getGameWorld().addEntityFactory(new JunkieKartPlayers());
+            FXGL.spawn("Player1", 400, 300);
 
-        FXGL.getGameWorld().addEntityFactory(new JunkieKartPlayers());
-        FXGL.spawn("Player1", 400, 300);
+            FXGL.getGameScene().clearUINodes();
+        });
 
+        FXGL.getGameScene().addUINode(loading);
     }
 
     public static void main(String[] args) {

@@ -11,7 +11,7 @@ public class JunkieKartPlayers implements EntityFactory {
     @Spawns("Player1")
     public Entity newPlayer(SpawnData data) {
         return FXGL.entityBuilder(data)
-                .view(FXGL.texture("cart.png"))
+                .view(FXGL.texture("textures/cart.png"))
                 .build();
     }
 
