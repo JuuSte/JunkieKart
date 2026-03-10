@@ -21,14 +21,12 @@ public class JunkieKartApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        LoadingScreen loading = new LoadingScreen(() -> {
-            FXGL.getGameWorld().addEntityFactory(new JunkieKartPlayers());
+        FXGL.getGameWorld().addEntityFactory(new JunkieKartPlayers());
+
+        // Auf den JavaFX Thread warten
+        javafx.application.Platform.runLater(() -> {
             FXGL.spawn("Player1", 400, 300);
-
-            FXGL.getGameScene().clearUINodes();
         });
-
-        FXGL.getGameScene().addUINode(loading);
     }
 
     public static void main(String[] args) {
