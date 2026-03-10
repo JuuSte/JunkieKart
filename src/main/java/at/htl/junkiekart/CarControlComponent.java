@@ -67,12 +67,9 @@ public class CarControlComponent extends Component {
                 dx = Math.sin(angleRad) * currentSpeed;
                 dy = -Math.cos(angleRad) * currentSpeed;
                 drifting = true;
-                reGripping = false;
             }
             @Override
             protected void onActionEnd() {
-                drifting = false;
-                reGripping = true; // start gradual re-grip instead of snapping
             }
         }, KeyCode.SPACE);
     }
@@ -92,20 +89,15 @@ public class CarControlComponent extends Component {
             // Driften berrechnen
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);
-        } else if (reGripping) {
-            // Re Gripen
-            dx = dx * (1 - reGrip) + targetDx * reGrip;
-            dy = dy * (1 - reGrip) + targetDy * reGrip;
-
-            // wieder gerade aus nur
-            double diffX = Math.abs(dx - targetDx);
-            double diffY = Math.abs(dy - targetDy);
-            if (diffX < 0.1 && diffY < 0.1) {
-                reGripping = false;
-            }
         } else {
-            dx = targetDx;
-            dy = targetDy;
+            if(targetDx != dx && targetDy != dy){
+                //Driften solange man nicht gerade ist
+                dx = dx * drift + targetDx * (1 - drift);
+                dy = dy * drift + targetDy * (1 - drift);
+            }else{
+                dx = targetDx;
+                dy = targetDy;
+            }
         }
 
         entity.translate(dx, dy);
