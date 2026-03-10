@@ -23,6 +23,8 @@ public class JunkieKartPlayers implements EntityFactory {
 
         return FXGL.entityBuilder(data)
                 .view(imageView)
+                .anchorFromCenter()
+                .with(new CarControlComponent())
                 .build();
     }
 
