@@ -14,6 +14,7 @@ public class JunkieKartApp extends GameApplication {
         settings.setTitle("Junkie Kart");
         settings.setWidth(1280);
         settings.setHeight(720);
+        settings.setWidth(1920);
 
         settings.setMainMenuEnabled(true);    //Menü aktivieren
         settings.setSceneFactory(new JunkieKartSceneFactory());
@@ -28,7 +29,6 @@ public class JunkieKartApp extends GameApplication {
             FXGL.spawn("Player1", 400, 300);
         });
     }
-
     public static void main(String[] args) {
         launch(args);
     }
