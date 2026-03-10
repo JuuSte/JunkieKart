@@ -80,7 +80,6 @@ public class CarControlComponent extends Component {
         double angleRad = Math.toRadians(entity.getRotation());
         double targetDx = Math.sin(angleRad) * currentSpeed;
         double targetDy = -Math.cos(angleRad) * currentSpeed;
-        double threshold = Math.abs(currentSpeed) * 0.1;
 
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
