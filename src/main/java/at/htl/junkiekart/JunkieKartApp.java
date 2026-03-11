@@ -18,8 +18,6 @@ public class JunkieKartApp extends GameApplication {
 
         settings.setMainMenuEnabled(true);    //Menü aktivieren
         settings.setSceneFactory(new JunkieKartSceneFactory());
-
-
     }
 
     @Override
@@ -43,7 +41,7 @@ public class JunkieKartApp extends GameApplication {
     }
 
     @Override
-    protected void onUpdate(double tpf) {
+    protected void onUpdate(double fps) {
         var entities = FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER);
         if (entities.isEmpty()) return;
 

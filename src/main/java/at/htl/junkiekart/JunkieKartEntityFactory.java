@@ -24,6 +24,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .view(imageView)
                 .anchorFromCenter()
                 .with(new CarControlComponent())
+                .with(new ItemComponent())
                 .build();
     }
     @Spawns("map1")

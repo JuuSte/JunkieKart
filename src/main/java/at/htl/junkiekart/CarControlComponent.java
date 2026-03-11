@@ -9,7 +9,7 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
-    private double maxSpeed = 20;
+    private double maxSpeed = 12;
     private double acceleration = 1;
     private double turnSpeed = 5;
     private double drift = 0.95;
@@ -30,8 +30,6 @@ public class CarControlComponent extends Component {
             @Override
             protected void onAction() {
                 currentSpeed += acceleration;
-                if (currentSpeed > maxSpeed)
-                    currentSpeed = maxSpeed;
             }
         }, KeyCode.W);
 
@@ -39,8 +37,6 @@ public class CarControlComponent extends Component {
             @Override
             protected void onAction() {
                 currentSpeed -= acceleration;
-                if (currentSpeed < -maxSpeed / 3)
-                    currentSpeed = -maxSpeed / 3;
             }
         }, KeyCode.S);
 
@@ -93,5 +89,35 @@ public class CarControlComponent extends Component {
 
         entity.translate(dx, dy);
         currentSpeed *= drifting ? driftFriction : friction;
+
+        //Langsam zurück auf Maxspeed wegen Boosts
+        if (currentSpeed > maxSpeed) {
+            currentSpeed = currentSpeed * 0.98 + maxSpeed * 0.02;
+        }
+        if (currentSpeed < -maxSpeed / 3) {
+            currentSpeed = currentSpeed * 0.98 + (-maxSpeed / 3) * 0.02;
+        }
+    }
+
+    //Für ItemComponent
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+    public void setMaxSpeed(double newMax) {
+        maxSpeed = newMax;
+    }
+
+    public double getAcceleration() {
+        return acceleration;
+    }
+    public void setAcceleration(double newAcc) {
+        acceleration = newAcc;
+    }
+
+    public double getCurrentSpeed() {
+        return acceleration;
+    }
+    public void setCurrentSpeed(double newCurrent) {
+        currentSpeed = newCurrent;
     }
 }
