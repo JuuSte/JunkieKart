@@ -50,7 +50,7 @@ public class ItemComponent extends Component {
         heldItem = null;
     }
 
-    private void spawnNadel() { /* todo */ }
+    private void spawnNadel() {}
 
     private void doCokain()  {
         if (kActive) return;// prevent stacking
@@ -64,7 +64,7 @@ public class ItemComponent extends Component {
         kTimer = kDuration;
     }
 
-    private void doLSD(){ /* todo */ }
+    private void doLSD(){}
 
     @Override
     public void onUpdate(double tpf) {
