@@ -90,7 +90,12 @@ public class CarControlComponent extends Component {
         entity.translate(dx, dy);
         currentSpeed *= drifting ? driftFriction : friction;
 
-        //Langsam zurück auf Maxspeed wegen Boosts
+        double actualSpeed = Math.sqrt(dx * dx + dy * dy);
+        if (actualSpeed > maxSpeed) {
+            dx *= maxSpeed / actualSpeed;
+            dy *= maxSpeed / actualSpeed;
+        }
+
         if (currentSpeed > maxSpeed) {
             currentSpeed = currentSpeed * 0.98 + maxSpeed * 0.02;
         }
