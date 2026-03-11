@@ -1,5 +1,6 @@
 package at.htl.junkiekart;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
 import javafx.scene.control.Alert;
@@ -16,22 +17,14 @@ public class ItemComponent extends Component {
     private boolean kActive = false;
     private double kBoost = 40.0;
 
+    //benutzte Nadel
+
     @Override
     public void onAdded() {
         getInput().addAction(new UserAction("Use Item") {
             @Override
             protected void onActionBegin() { useItem(); }
         }, KeyCode.E);
-
-
-        //Temp: Zum Testen immer Kokain geben
-        getInput().addAction(new UserAction("Add Item") {
-            @Override
-            protected void onAction() {
-                if (heldItem == null)
-                    heldItem = ItemType.Kokain;
-            }
-        }, KeyCode.Q);
     }
 
     public void giveItem(ItemType item) {
@@ -41,19 +34,25 @@ public class ItemComponent extends Component {
     }
 
     private void useItem() {
-        if (heldItem == null) return;
+        if (heldItem == null){
+            return;
+        }
         switch (heldItem) {
             case Benutzte_Nadel -> spawnNadel();
             case Kokain ->  doCokain();
-            case LSD ->   doLSD();
+            //case LSD ->   doLSD();
         }
         heldItem = null;
     }
 
-    private void spawnNadel() {}
+    private void spawnNadel() {
+        FXGL.spawn("Nadel", entity.getX()-50, entity.getY()-50);
+    }
 
     private void doCokain()  {
-        if (kActive) return;// prevent stacking
+        if (kActive == true){
+            return;
+        }
         entity.getComponent(CarControlComponent.class).setCurrentSpeed(
                 entity.getComponent(CarControlComponent.class).getCurrentSpeed() + kBoost
         );
@@ -69,7 +68,7 @@ public class ItemComponent extends Component {
     @Override
     public void onUpdate(double tpf) {
         //Kokain Code
-        if (kActive) {
+        if (kActive == true) {
             kTimer -= tpf;
             if (kTimer <= 0) {
                 entity.getComponent(CarControlComponent.class).setMaxSpeed(

@@ -34,12 +34,29 @@ public class JunkieKartEntityFactory implements EntityFactory {
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
-        imageView.setFitWidth(64);
-        imageView.setFitHeight(64);
+        imageView.setFitWidth(56);
+        imageView.setFitHeight(56);
         imageView.setPreserveRatio(true);
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.BAG)
+                .view(imageView)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("Nadel")
+    public Entity newNadel(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/nadel.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+
+        imageView.setFitWidth(56);
+        imageView.setFitHeight(56);
+        imageView.setPreserveRatio(true);
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.NADEL)
                 .view(imageView)
                 .anchorFromCenter()
                 .build();

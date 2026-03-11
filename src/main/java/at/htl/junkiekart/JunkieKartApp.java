@@ -35,6 +35,9 @@ public class JunkieKartApp extends GameApplication {
                 FXGL.spawn("Player1", 400, 300);
                 FXGL.spawn("Bag", 600, 300);
                 FXGL.spawn("Bag", 200, 500);
+                FXGL.spawn("Nadel", 700, 800);
+                FXGL.spawn("Nadel", 500, 600);
+
             });
 
             FXGL.getGameScene().addUINode(mapSelect);
@@ -49,6 +52,7 @@ public class JunkieKartApp extends GameApplication {
         if (entities.isEmpty()) return;
 
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
+        var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
 
         Entity player = entities.get(0);
 
@@ -56,9 +60,16 @@ public class JunkieKartApp extends GameApplication {
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
 
         for (Entity bag : new ArrayList<>(bags)) {
-            if (player.distance(bag) < 50) {
-                player.getComponent(ItemComponent.class).giveItem(ItemType.Kokain);
+            if (player.distance(bag) < 56) {
+                player.getComponent(ItemComponent.class).giveItem(ItemType.values()[(int)(Math.random() * ItemType.values().length)]);//Random Item geben
                 bag.removeFromWorld();
+            }
+        }
+
+        for (Entity needle : new ArrayList<>(needles)) {
+            if (player.distance(needle) < 56) {
+                player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                needle.removeFromWorld();
             }
         }
     }
