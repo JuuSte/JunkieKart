@@ -4,6 +4,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
@@ -32,8 +33,14 @@ public class JunkieKartApp extends GameApplication {
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
 
-                FXGL.spawn(mapId);
-                FXGL.spawn("Player1", 400, 300);
+                CustomizeOverlay[] customize = new CustomizeOverlay[1];
+                customize[0] = new CustomizeOverlay(mapId, () -> {
+                    FXGL.getGameScene().clearUINodes();
+                    FXGL.spawn(mapId);
+                    FXGL.spawn("Player1", new SpawnData(960, 540).put("skin", customize[0].getSelectedSkin()));
+                });
+
+                FXGL.getGameScene().addUINode(customize[0]);
             });
 
             FXGL.getGameScene().addUINode(mapSelect);

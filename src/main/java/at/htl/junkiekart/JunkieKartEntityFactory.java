@@ -10,14 +10,16 @@ public class JunkieKartEntityFactory implements EntityFactory {
 
     @Spawns("Player1")
     public Entity newPlayer(SpawnData data) {
-        // Manuell laden weil FXGL.texture() nicht funktioniert
-        var stream = getClass().getResourceAsStream("/assets/textures/cart.png");
+        String skin = data.get("skin");
+
+        var stream = getClass().getResourceAsStream("/assets/textures/karts/" + skin);
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
         imageView.setFitWidth(72);
         imageView.setFitHeight(72);
         imageView.setPreserveRatio(true);
+        imageView.setRotate(-90);
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.PLAYER)
