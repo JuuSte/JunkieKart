@@ -72,9 +72,6 @@ public class ItemComponent extends Component {
         if (kActive) {
             kTimer -= tpf;
             if (kTimer <= 0) {
-                entity.getComponent(CarControlComponent.class).setCurrentSpeed(
-                        entity.getComponent(CarControlComponent.class).getCurrentSpeed() - kBoost
-                );
                 entity.getComponent(CarControlComponent.class).setMaxSpeed(
                         entity.getComponent(CarControlComponent.class).getMaxSpeed() - kBoost
                 );

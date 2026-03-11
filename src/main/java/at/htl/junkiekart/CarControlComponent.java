@@ -107,15 +107,8 @@ public class CarControlComponent extends Component {
         maxSpeed = newMax;
     }
 
-    public double getAcceleration() {
-        return acceleration;
-    }
-    public void setAcceleration(double newAcc) {
-        acceleration = newAcc;
-    }
-
     public double getCurrentSpeed() {
-        return acceleration;
+        return currentSpeed;
     }
     public void setCurrentSpeed(double newCurrent) {
         currentSpeed = newCurrent;

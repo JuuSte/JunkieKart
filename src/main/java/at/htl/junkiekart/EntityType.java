@@ -1,5 +1,5 @@
 package at.htl.junkiekart;
 
 public enum EntityType {
-    PLAYER, MAP
+    PLAYER, MAP, BAG
 }
