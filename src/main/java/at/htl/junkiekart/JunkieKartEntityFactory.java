@@ -8,7 +8,7 @@ import com.almasb.fxgl.entity.Spawns;
 
 public class JunkieKartEntityFactory implements EntityFactory {
 
-    @Spawns("Player1")
+    @Spawns("Player")
     public Entity newPlayer(SpawnData data) {
         String skin = data.get("skin");
 
@@ -26,8 +26,44 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .view(imageView)
                 .anchorFromCenter()
                 .with(new CarControlComponent())
+                .with(new ItemComponent())
                 .build();
     }
+
+    @Spawns("Bag")
+    public Entity newBag(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/bag.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+
+        imageView.setFitWidth(56);
+        imageView.setFitHeight(56);
+        imageView.setPreserveRatio(true);
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.BAG)
+                .view(imageView)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("Nadel")
+    public Entity newNadel(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/nadel.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+
+        imageView.setFitWidth(56);
+        imageView.setFitHeight(56);
+        imageView.setPreserveRatio(true);
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.NADEL)
+                .view(imageView)
+                .anchorFromCenter()
+                .build();
+    }
+
     @Spawns("map1")
     public Entity newTestMap(SpawnData data) {
         var stream = getClass().getResourceAsStream("/assets/textures/maps/testmap.png");
