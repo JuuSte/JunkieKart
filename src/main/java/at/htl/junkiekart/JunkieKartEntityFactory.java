@@ -16,8 +16,8 @@ public class JunkieKartEntityFactory implements EntityFactory {
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
-        imageView.setFitWidth(72);
-        imageView.setFitHeight(72);
+        imageView.setFitWidth(48);
+        imageView.setFitHeight(48);
         imageView.setPreserveRatio(true);
         imageView.setRotate(-90);
 
@@ -25,9 +25,11 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .type(EntityType.PLAYER)
                 .view(imageView)
                 .anchorFromCenter()
+                .with(new SkidMarkComponent(image))
                 .with(new CarControlComponent())
                 .with(new ItemComponent())
                 .build();
+
     }
 
     @Spawns("Bag")

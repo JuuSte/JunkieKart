@@ -1,7 +1,9 @@
 package at.htl.junkiekart;
 
+import com.almasb.fxgl.core.Inject;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.particle.ParticleEmitter;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.dsl.FXGL.getInput;
@@ -56,10 +58,9 @@ public class CarControlComponent extends Component {
 
         getInput().addAction(new UserAction("Drift") {
             @Override
-            protected void onActionBegin() {
+            protected void onAction() {
                 drifting = true;
             }
-            @Override
             protected void onActionEnd() {
                 drifting = false;
             }
@@ -82,9 +83,11 @@ public class CarControlComponent extends Component {
         if (drifting || dot < 0.99) {
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);
+            entity.getComponent(SkidMarkComponent.class).setActive(true);
         } else {
             dx = targetDx;
             dy = targetDy;
+            entity.getComponent(SkidMarkComponent.class).setActive(false);
         }
 
         entity.translate(dx, dy);
