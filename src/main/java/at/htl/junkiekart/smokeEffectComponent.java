@@ -39,7 +39,7 @@ public class smokeEffectComponent extends Component {
 
     private void spawnSmoke(double x, double y, double vx, double vy) {
         double size = 4 + Math.random() * 6;
-        Circle circle = new Circle(size, Color.color(0.7, 0.7, 0.7, 0.7));
+        Circle circle = new Circle(size, Color.DARKGRAY);
 
         var smoke = entityBuilder()
                 .at(x, y)

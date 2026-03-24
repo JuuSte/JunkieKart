@@ -11,6 +11,8 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 
 public class JunkieKartApp extends GameApplication {
+    private boolean needleHit = false;
+    private double needleTimer;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -76,9 +78,20 @@ public class JunkieKartApp extends GameApplication {
         for (Entity needle : new ArrayList<>(needles)) {
             if (player.distance(needle) < 56) {
                 player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                needleHit = true;
+                needleTimer = 2;
                 needle.removeFromWorld();
             }
         }
+
+        if(needleHit){
+            player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+        }
+        needleTimer -= tpf;
+        if (needleTimer <= 0) {
+            needleHit = false;
+        }
+
     }
 
     public static void main(String[] args) {
