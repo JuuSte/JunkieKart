@@ -5,33 +5,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.FXGL.animationBuilder;
-import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SkidMarkComponent extends Component {
 
     private double timeSinceLastMark = 0;
     private boolean active = false;
-
-    private final double halfWidth;
-    private final double halfHeight;
-    private static final double DISPLAY_SIZE = 48;
-
-    public SkidMarkComponent(javafx.scene.image.Image image) {
-        double aspectRatio = image.getWidth() / image.getHeight();
-
-        double renderedWidth, renderedHeight;
-        if (aspectRatio > 1) {
-            renderedWidth = DISPLAY_SIZE;
-            renderedHeight = DISPLAY_SIZE / aspectRatio;
-        } else {
-            renderedWidth = DISPLAY_SIZE * aspectRatio;
-            renderedHeight = DISPLAY_SIZE;
-        }
-
-        this.halfWidth = renderedWidth / 2 * 0.7;
-        this.halfHeight = renderedHeight / 2 * 0.8;
-    }
 
     public void setActive(boolean active) {
         this.active = active;
@@ -39,37 +18,23 @@ public class SkidMarkComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
+        double x = entity.getX();
+        double y = entity.getY();
+        double rearY = entity.getBottomY();
+        double rightX = entity.getRightX();
+
         if (!active) return;
 
         timeSinceLastMark += tpf;
-        if (timeSinceLastMark >= 0.05) {
+        if (timeSinceLastMark >= 0.001) {
             timeSinceLastMark = 0;
 
             double angle = Math.toRadians(entity.getRotation());
 
-            double cx = entity.getCenter().getX();
-            double cy = entity.getCenter().getY();
-
-            // rear left
-            spawnMark(
-                    cx - halfWidth * Math.cos(angle) + halfHeight * Math.sin(angle),
-                    cy - halfWidth * Math.sin(angle) - halfHeight * Math.cos(angle)
-            );
-            // rear right
-            spawnMark(
-                    cx + halfWidth * Math.cos(angle) + halfHeight * Math.sin(angle),
-                    cy + halfWidth * Math.sin(angle) - halfHeight * Math.cos(angle)
-            );
-            // front left
-            spawnMark(
-                    cx - halfWidth * Math.cos(angle) - halfHeight * Math.sin(angle),
-                    cy - halfWidth * Math.sin(angle) + halfHeight * Math.cos(angle)
-            );
-            // front right
-            spawnMark(
-                    cx + halfWidth * Math.cos(angle) - halfHeight * Math.sin(angle),
-                    cy + halfWidth * Math.sin(angle) + halfHeight * Math.cos(angle)
-            );
+            spawnMark(entity.getX() + 30 * Math.cos(angle) - 5  * Math.sin(angle), entity.getY() + 30 * Math.sin(angle) + 5  * Math.cos(angle)); // top-right
+            spawnMark(entity.getX() + 12 * Math.cos(angle) - 5  * Math.sin(angle), entity.getY() + 12 * Math.sin(angle) + 5  * Math.cos(angle)); // top-left
+            spawnMark(entity.getX() + 30 * Math.cos(angle) - 30 * Math.sin(angle), entity.getY() + 30 * Math.sin(angle) + 30 * Math.cos(angle)); // bottom-right
+            spawnMark(entity.getX() + 12 * Math.cos(angle) - 30 * Math.sin(angle), entity.getY() + 12 * Math.sin(angle) + 30 * Math.cos(angle)); // bottom-left
         }
     }
 
@@ -80,6 +45,7 @@ public class SkidMarkComponent extends Component {
                 .at(x, y)
                 .rotate(entity.getRotation())
                 .view(rect)
+                .zIndex(-1)
                 .buildAndAttach();
 
         animationBuilder()

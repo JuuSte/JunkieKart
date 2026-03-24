@@ -60,6 +60,7 @@ public class CarControlComponent extends Component {
             @Override
             protected void onAction() {
                 drifting = true;
+                entity.getComponent(smokeEffectComponent.class).setActive(true);
             }
             protected void onActionEnd() {
                 drifting = false;
@@ -88,6 +89,7 @@ public class CarControlComponent extends Component {
             dx = targetDx;
             dy = targetDy;
             entity.getComponent(SkidMarkComponent.class).setActive(false);
+            entity.getComponent(smokeEffectComponent.class).setActive(false);
         }
 
         entity.translate(dx, dy);
