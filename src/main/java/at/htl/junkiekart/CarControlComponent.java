@@ -56,10 +56,10 @@ public class CarControlComponent extends Component {
 
         getInput().addAction(new UserAction("Drift") {
             @Override
-            protected void onActionBegin() {
+            protected void onAction() {
                 drifting = true;
+                entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
             }
-            @Override
             protected void onActionEnd() {
                 drifting = false;
             }
@@ -82,9 +82,12 @@ public class CarControlComponent extends Component {
         if (drifting || dot < 0.99) {
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);
+            entity.getComponent(SkidMarkComponent.class).setActive(true);
         } else {
             dx = targetDx;
             dy = targetDy;
+            entity.getComponent(SkidMarkComponent.class).setActive(false);
+            entity.getComponent(EffectComponent.class).spawnSmokeEffect(false);
         }
 
         entity.translate(dx, dy);

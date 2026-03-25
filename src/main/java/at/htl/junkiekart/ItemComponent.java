@@ -3,7 +3,6 @@ package at.htl.junkiekart;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
-import javafx.scene.control.Alert;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.dsl.FXGL.getInput;
@@ -13,11 +12,14 @@ public class ItemComponent extends Component {
 
     //kokain
     private double kDuration = 1.0; // seconds
-    private double kTimer = 0;
     private boolean kActive = false;
     private double kBoost = 40.0;
 
-    //benutzte Nadel
+    //pilz
+    private boolean invincible = false;
+
+    //Algemain
+    private double timer = 0;
 
     @Override
     public void onAdded() {
@@ -40,7 +42,7 @@ public class ItemComponent extends Component {
         switch (heldItem) {
             case Benutzte_Nadel -> spawnNadel();
             case Kokain ->  doCokain();
-            //case LSD ->   doLSD();
+            case Shroom ->   eatShroom();
         }
         heldItem = null;
     }
@@ -53,6 +55,7 @@ public class ItemComponent extends Component {
         if (kActive == true){
             return;
         }
+        entity.getComponent(EffectComponent.class).spawnCocainEffect();
         entity.getComponent(CarControlComponent.class).setCurrentSpeed(
                 entity.getComponent(CarControlComponent.class).getCurrentSpeed() + kBoost
         );
@@ -60,22 +63,39 @@ public class ItemComponent extends Component {
                 entity.getComponent(CarControlComponent.class).getMaxSpeed() + kBoost
         );
         kActive = true;
-        kTimer = kDuration;
+        timer = kDuration;
     }
 
-    private void doLSD(){}
+    private void eatShroom(){
+        invincible = true;
+        timer = 15;
+        entity.getComponent(EffectComponent.class).spawnShroomEffect(true);
+    }
 
     @Override
     public void onUpdate(double tpf) {
         //Kokain Code
         if (kActive == true) {
-            kTimer -= tpf;
-            if (kTimer <= 0) {
+            timer -= tpf;
+            if (timer <= 0) {
                 entity.getComponent(CarControlComponent.class).setMaxSpeed(
                         entity.getComponent(CarControlComponent.class).getMaxSpeed() - kBoost
                 );
                 kActive = false;
             }
         }
+        //Pilz Code
+
+        if(invincible == true){
+            timer -= tpf;
+            if(timer <= 0){
+                entity.getComponent(EffectComponent.class).spawnShroomEffect(false);
+                invincible = false;
+            }
+        }
+    }
+
+    public boolean getInvincible(){
+        return invincible;
     }
 }

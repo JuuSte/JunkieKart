@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 
 public class JunkieKartEntityFactory implements EntityFactory {
 
@@ -24,7 +26,10 @@ public class JunkieKartEntityFactory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(EntityType.PLAYER)
                 .view(imageView)
+                .bbox(new HitBox(BoundingShape.box(30, 48)))
                 .anchorFromCenter()
+                .with(new EffectComponent())
+                .with(new SkidMarkComponent())
                 .with(new CarControlComponent())
                 .with(new ItemComponent())
                 .build();
