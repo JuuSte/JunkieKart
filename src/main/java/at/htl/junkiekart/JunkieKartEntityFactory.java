@@ -26,20 +26,5 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .with(new CarControlComponent())
                 .build();
     }
-    @Spawns("map1")
-    public Entity newTestMap(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/testmap.png");
-        var image = new javafx.scene.image.Image(stream);
-        var imageView = new javafx.scene.image.ImageView(image);
-        imageView.setFitWidth(FXGL.getAppWidth());
-        imageView.setFitHeight(FXGL.getAppHeight());
-
-        return FXGL.entityBuilder(data)
-                .type(EntityType.MAP)
-                .at(0, 0)
-                .view(imageView)
-                .zIndex(-1)
-                .build();
-    }
 
 }

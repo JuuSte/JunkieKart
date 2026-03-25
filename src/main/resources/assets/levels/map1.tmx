@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="34" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
  <editorsettings>
-  <export target="../textures/maps/testmapp.tmx" format="tmx"/>
+  <export target="../textures/levels/map1.tmx" format="tmx"/>
  </editorsettings>
- <tileset firstgid="1" source="../../../../../../KartMaps/racetrack.tsx"/>
- <tileset firstgid="5185" source="../../../../../../KartMaps/racetrack11.tsx"/>
+ <tileset firstgid="1" source="../textures/racetrack.tsx"/>
+ <tileset firstgid="5185" source="../textures/racetrack11.tsx"/>
  <layer id="1" name="grassLayer" width="60" height="34">
   <properties>
    <property name="collidable" value="true"/>

@@ -31,9 +31,8 @@ public class JunkieKartApp extends GameApplication {
 
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
-
-                FXGL.spawn(mapId);
-                FXGL.spawn("Player1", 400, 300);
+                FXGL.setLevelFromMap(mapId + ".tmx");
+                FXGL.spawn("Player1", 960, 540);
             });
 
             FXGL.getGameScene().addUINode(mapSelect);

@@ -36,10 +36,9 @@ public class LoadingScreen extends StackPane {
 
         getChildren().addAll(background, box);
 
-        // Animation des Fortschritts
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressBar.widthProperty(), 0)),
-                new KeyFrame(Duration.seconds(2), new KeyValue(progressBar.widthProperty(), 400))
+                new KeyFrame(Duration.seconds(0.2), new KeyValue(progressBar.widthProperty(), 400))
         );
 
         timeline.setOnFinished(e -> onComplete.run());

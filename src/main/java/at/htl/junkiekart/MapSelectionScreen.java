@@ -48,14 +48,12 @@ public class MapSelectionScreen extends StackPane{
     private VBox createMapCard(String mapId, String mapName, String color,
                                java.util.function.Consumer<String> onMapSelected) {
 
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/testmap.png");
-        var image = new javafx.scene.image.Image(stream);
-        var imageView = new javafx.scene.image.ImageView(image);
-        imageView.setFitWidth(300);
-        imageView.setFitHeight(200);
-        imageView.setPreserveRatio(true);
+        // Platzhalter statt Bild
+        Rectangle preview = new Rectangle(300, 200);
+        preview.setFill(Color.web(color, 0.3));
+        preview.setArcWidth(15);
+        preview.setArcHeight(15);
 
-        // Rahmen um das Bild
         Rectangle border = new Rectangle(300, 200);
         border.setFill(Color.TRANSPARENT);
         border.setStroke(Color.web(color));
@@ -63,18 +61,18 @@ public class MapSelectionScreen extends StackPane{
         border.setArcWidth(15);
         border.setArcHeight(15);
 
-        StackPane previewPane = new StackPane(imageView, border);
+        StackPane previewPane = new StackPane(preview, border);
 
         Text name = new Text(mapName);
         name.setFont(Font.font("Arial", 22));
         name.setFill(Color.WHITE);
 
-        VBox card = new VBox(15, previewPane, name);  // ← previewPane statt preview
+        VBox card = new VBox(15, previewPane, name);
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-cursor: hand;");
 
         card.setOnMouseEntered(e -> {
-            border.setStrokeWidth(4);  // ← border statt preview
+            border.setStrokeWidth(4);
             DropShadow shadow = new DropShadow();
             shadow.setColor(Color.web(color));
             shadow.setRadius(25);
@@ -83,7 +81,7 @@ public class MapSelectionScreen extends StackPane{
             card.setScaleY(1.05);
         });
         card.setOnMouseExited(e -> {
-            border.setStrokeWidth(2);  // ← border statt preview
+            border.setStrokeWidth(2);
             card.setEffect(null);
             card.setScaleX(1.0);
             card.setScaleY(1.0);
