@@ -16,8 +16,8 @@ public class JunkieKartEntityFactory implements EntityFactory {
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
-        imageView.setFitWidth(72);
-        imageView.setFitHeight(72);
+        imageView.setFitWidth(48);
+        imageView.setFitHeight(48);
         imageView.setPreserveRatio(true);
         imageView.setRotate(-90);
 
@@ -66,7 +66,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
 
     @Spawns("map1")
     public Entity newTestMap(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/testmap.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(FXGL.getAppWidth());

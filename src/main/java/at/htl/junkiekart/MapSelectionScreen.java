@@ -48,7 +48,7 @@ public class MapSelectionScreen extends StackPane{
     private VBox createMapCard(String mapId, String mapName, String color,
                                java.util.function.Consumer<String> onMapSelected) {
 
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/testmap.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(300);
