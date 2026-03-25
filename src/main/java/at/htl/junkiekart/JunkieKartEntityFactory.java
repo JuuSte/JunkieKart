@@ -28,7 +28,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .view(imageView)
                 .bbox(new HitBox(BoundingShape.box(30, 48)))
                 .anchorFromCenter()
-                .with(new smokeEffectComponent())
+                .with(new EffectComponent())
                 .with(new SkidMarkComponent())
                 .with(new CarControlComponent())
                 .with(new ItemComponent())

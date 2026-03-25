@@ -1,9 +1,7 @@
 package at.htl.junkiekart;
 
-import com.almasb.fxgl.core.Inject;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.particle.ParticleEmitter;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.dsl.FXGL.getInput;
@@ -60,7 +58,7 @@ public class CarControlComponent extends Component {
             @Override
             protected void onAction() {
                 drifting = true;
-                entity.getComponent(smokeEffectComponent.class).setActive(true);
+                entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
             }
             protected void onActionEnd() {
                 drifting = false;
@@ -89,7 +87,7 @@ public class CarControlComponent extends Component {
             dx = targetDx;
             dy = targetDy;
             entity.getComponent(SkidMarkComponent.class).setActive(false);
-            entity.getComponent(smokeEffectComponent.class).setActive(false);
+            entity.getComponent(EffectComponent.class).spawnSmokeEffect(false);
         }
 
         entity.translate(dx, dy);

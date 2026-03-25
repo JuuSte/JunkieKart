@@ -36,6 +36,8 @@ public class JunkieKartApp extends GameApplication {
 
                 FXGL.spawn("Bag", 600, 300);
                 FXGL.spawn("Bag", 200, 500);
+                FXGL.spawn("Bag", 800, 200);
+                FXGL.spawn("Bag", 600, 800);
                 FXGL.spawn("Nadel", 700, 800);
                 FXGL.spawn("Nadel", 500, 600);
 
@@ -77,9 +79,12 @@ public class JunkieKartApp extends GameApplication {
 
         for (Entity needle : new ArrayList<>(needles)) {
             if (player.distance(needle) < 56) {
-                player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
-                needleHit = true;
-                needleTimer = 2;
+                if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                    player.getComponent(EffectComponent.class).spawnBloodEffect();
+                    needleHit = true;
+                    needleTimer = 2;
+                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                }
                 needle.removeFromWorld();
             }
         }
