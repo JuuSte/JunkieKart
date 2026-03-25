@@ -16,7 +16,7 @@ public class EffectComponent extends Component {
     public void onUpdate(double tpf) {
 
         double backAngle = Math.toRadians(entity.getRotation() + 180);
-        double spread = Math.toRadians((Math.random() - 0.5) * 1000);
+        double spread = Math.toRadians((Math.random() - 0.5) * 2000);
         double angle = backAngle + spread;
         double speed = 30 + Math.random() * 30;
 
