@@ -5,6 +5,11 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
@@ -13,6 +18,9 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 public class JunkieKartApp extends GameApplication {
     private boolean needleHit = false;
     private double needleTimer;
+    //collision für map
+    private Image collisionImage;
+    private PixelReader reader;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -45,7 +53,15 @@ public class JunkieKartApp extends GameApplication {
                 customize[0] = new CustomizeOverlay(mapId, () -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
-                    FXGL.spawn("Player", new SpawnData(960, 540).put("skin", customize[0].getSelectedSkin()));
+                    ImageView collisionView = new ImageView(
+                            new Image(getClass().getResource("/assets/textures/maps/collision.png").toExternalForm())
+                    );
+                    collisionView.setFitWidth(FXGL.getAppWidth());
+                    collisionView.setFitHeight(FXGL.getAppHeight());
+
+                    collisionImage = collisionView.getImage();
+                    reader = collisionImage.getPixelReader();
+                    FXGL.spawn("Player", new SpawnData(200, 540).put("skin", customize[0].getSelectedSkin()));
                 });
 
                 FXGL.getGameScene().addUINode(customize[0]);
@@ -59,45 +75,58 @@ public class JunkieKartApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        var entities = FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER);
-        if (entities.isEmpty()) return;
+        var players = FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER);
+        if (players.isEmpty()) return;
 
+        Entity player = players.get(0);
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
-
-        Entity player = entities.get(0);
 
         player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
 
         for (Entity bag : new ArrayList<>(bags)) {
             if (player.distance(bag) < 56) {
-                player.getComponent(ItemComponent.class).giveItem(ItemType.values()[(int)(Math.random() * ItemType.values().length)]);//Random Item geben
+                player.getComponent(ItemComponent.class).giveItem(
+                        ItemType.values()[(int)(Math.random() * ItemType.values().length)]
+                );
                 bag.removeFromWorld();
             }
         }
 
         for (Entity needle : new ArrayList<>(needles)) {
             if (player.distance(needle) < 56) {
-                if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                if (!player.getComponent(ItemComponent.class).getInvincible()) {
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
                     needleHit = true;
                     needleTimer = 2;
-                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 needle.removeFromWorld();
             }
         }
 
-        if(needleHit){
-            player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+        if (needleHit) {
+            needleTimer -= tpf;
+            if (needleTimer <= 0) {
+                needleHit = false;
+            }
         }
-        needleTimer -= tpf;
-        if (needleTimer <= 0) {
-            needleHit = false;
-        }
-
     }
+
+    public boolean isOnTrack(double x, double y) {
+        if (collisionImage == null) return false;
+
+        double px = x * collisionImage.getWidth() / FXGL.getAppWidth();
+        double py = y * collisionImage.getHeight() / FXGL.getAppHeight();
+
+        if (px < 0 || py < 0 || px >= collisionImage.getWidth() || py >= collisionImage.getHeight())
+            return false;
+
+        Color color = reader.getColor((int) px, (int) py);
+        return color.getRed() > 0.9; // Weiß = Straße
+    }
+
+
 
     public static void main(String[] args) {
         launch(args);

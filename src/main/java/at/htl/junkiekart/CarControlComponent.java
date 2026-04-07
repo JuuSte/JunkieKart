@@ -1,5 +1,6 @@
 package at.htl.junkiekart;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.KeyCode;
@@ -9,9 +10,9 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
-    private double maxSpeed = 12;
+    private double maxSpeed = 6;
     private double acceleration = 1;
-    private double turnSpeed = 5;
+    private double turnSpeed = 8;
     private double drift = 0.95;
     private double friction = 0.93;
     private double driftFriction = 0.98;
@@ -25,19 +26,14 @@ public class CarControlComponent extends Component {
 
     @Override
     public void onAdded() {
-
         getInput().addAction(new UserAction("Accelerate") {
             @Override
-            protected void onAction() {
-                currentSpeed += acceleration;
-            }
+            protected void onAction() { currentSpeed += acceleration; }
         }, KeyCode.W);
 
         getInput().addAction(new UserAction("Brake") {
             @Override
-            protected void onAction() {
-                currentSpeed -= acceleration;
-            }
+            protected void onAction() { currentSpeed -= acceleration; }
         }, KeyCode.S);
 
         getInput().addAction(new UserAction("Turn Left") {
@@ -60,16 +56,16 @@ public class CarControlComponent extends Component {
                 drifting = true;
                 entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
             }
-            protected void onActionEnd() {
-                drifting = false;
-            }
+            @Override
+            protected void onActionEnd() { drifting = false; }
         }, KeyCode.SPACE);
     }
 
     @Override
     public void onUpdate(double tpf) {
-        double rotationAmount = turnSpeed * Math.abs(currentSpeed) / 20.0;
+        JunkieKartApp app = (JunkieKartApp) FXGL.getApp();
 
+        double rotationAmount = turnSpeed * Math.abs(currentSpeed) / 20.0;
         if (turnLeft)  entity.rotateBy(-rotationAmount);
         if (turnRight) entity.rotateBy(rotationAmount);
 
@@ -79,6 +75,7 @@ public class CarControlComponent extends Component {
 
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
+
         if (drifting || dot < 0.99) {
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);
@@ -90,7 +87,37 @@ public class CarControlComponent extends Component {
             entity.getComponent(EffectComponent.class).spawnSmokeEffect(false);
         }
 
-        entity.translate(dx, dy);
+
+        int steps = 10;
+        double stepX = dx / steps;
+        double stepY = dy / steps;
+
+        for (int i = 0; i < steps; i++) {
+            if (app.isOnTrack(entity.getX() + stepX, entity.getY() + stepY)) {
+                entity.translate(stepX, stepY);
+            } else if (app.isOnTrack(entity.getX() + stepX, entity.getY())) {
+                entity.translateX(stepX);
+                dy *= -0.5;
+                currentSpeed *= 0.5;
+                break;
+            } else if (app.isOnTrack(entity.getX(), entity.getY() + stepY)) {
+                entity.translateY(stepY);
+                dx *= -0.5;
+                currentSpeed *= 0.5;
+                break;
+            } else {
+                // Aktuelle Position auch off-track? Rausschieben
+                if (!app.isOnTrack(entity.getX(), entity.getY())) {
+                    entity.translateX(-dx);
+                    entity.translateY(-dy);
+                }
+                currentSpeed *= -0.3;
+                dx *= -0.3;
+                dy *= -0.3;
+                break;
+            }
+        }
+
         currentSpeed *= drifting ? driftFriction : friction;
 
         double actualSpeed = Math.sqrt(dx * dx + dy * dy);
@@ -99,26 +126,14 @@ public class CarControlComponent extends Component {
             dy *= maxSpeed / actualSpeed;
         }
 
-        if (currentSpeed > maxSpeed) {
-            currentSpeed = currentSpeed * 0.98 + maxSpeed * 0.02;
-        }
-        if (currentSpeed < -maxSpeed / 3) {
-            currentSpeed = currentSpeed * 0.98 + (-maxSpeed / 3) * 0.02;
-        }
+        if (currentSpeed > maxSpeed) currentSpeed = currentSpeed * 0.98 + maxSpeed * 0.02;
+        if (currentSpeed < -maxSpeed / 3) currentSpeed = currentSpeed * 0.98 + (-maxSpeed / 3) * 0.02;
     }
 
-    //Für ItemComponent
-    public double getMaxSpeed() {
-        return maxSpeed;
-    }
-    public void setMaxSpeed(double newMax) {
-        maxSpeed = newMax;
-    }
 
-    public double getCurrentSpeed() {
-        return currentSpeed;
-    }
-    public void setCurrentSpeed(double newCurrent) {
-        currentSpeed = newCurrent;
-    }
+
+    public double getMaxSpeed() { return maxSpeed; }
+    public void setMaxSpeed(double newMax) { maxSpeed = newMax; }
+    public double getCurrentSpeed() { return currentSpeed; }
+    public void setCurrentSpeed(double newCurrent) { currentSpeed = newCurrent; }
 }
