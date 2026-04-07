@@ -10,9 +10,9 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
-    private double maxSpeed = 6;
+    private double maxSpeed = 12;
     private double acceleration = 1;
-    private double turnSpeed = 8;
+    private double turnSpeed = 5;
     private double drift = 0.95;
     private double friction = 0.93;
     private double driftFriction = 0.98;
@@ -26,14 +26,19 @@ public class CarControlComponent extends Component {
 
     @Override
     public void onAdded() {
+
         getInput().addAction(new UserAction("Accelerate") {
             @Override
-            protected void onAction() { currentSpeed += acceleration; }
+            protected void onAction() {
+                currentSpeed += acceleration;
+            }
         }, KeyCode.W);
 
         getInput().addAction(new UserAction("Brake") {
             @Override
-            protected void onAction() { currentSpeed -= acceleration; }
+            protected void onAction() {
+                currentSpeed -= acceleration;
+            }
         }, KeyCode.S);
 
         getInput().addAction(new UserAction("Turn Left") {
@@ -56,8 +61,9 @@ public class CarControlComponent extends Component {
                 drifting = true;
                 entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
             }
-            @Override
-            protected void onActionEnd() { drifting = false; }
+            protected void onActionEnd() {
+                drifting = false;
+            }
         }, KeyCode.SPACE);
     }
 
@@ -66,6 +72,7 @@ public class CarControlComponent extends Component {
         JunkieKartApp app = (JunkieKartApp) FXGL.getApp();
 
         double rotationAmount = turnSpeed * Math.abs(currentSpeed) / 20.0;
+
         if (turnLeft)  entity.rotateBy(-rotationAmount);
         if (turnRight) entity.rotateBy(rotationAmount);
 
@@ -75,7 +82,6 @@ public class CarControlComponent extends Component {
 
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
-
         if (drifting || dot < 0.99) {
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);

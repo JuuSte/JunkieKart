@@ -16,8 +16,8 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 
 public class JunkieKartApp extends GameApplication {
-    private boolean needleHit = false;
-    private double needleTimer;
+    private boolean Hit = false;
+    private double HitTimer;
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
@@ -48,6 +48,8 @@ public class JunkieKartApp extends GameApplication {
                 FXGL.spawn("Bag", 600, 800);
                 FXGL.spawn("Nadel", 700, 800);
                 FXGL.spawn("Nadel", 500, 600);
+                FXGL.spawn("Vomit", 1200, 600);
+                FXGL.spawn("Vomit",1400, 400);
 
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
@@ -81,6 +83,8 @@ public class JunkieKartApp extends GameApplication {
         Entity player = players.get(0);
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
+        var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BOTTLE);
+        var vomits = FXGL.getGameWorld().getEntitiesByType(EntityType.VOMIT);
 
         player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
@@ -98,19 +102,46 @@ public class JunkieKartApp extends GameApplication {
             if (player.distance(needle) < 56) {
                 if (!player.getComponent(ItemComponent.class).getInvincible()) {
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
-                    needleHit = true;
-                    needleTimer = 2;
+                    Hit = true;
+                    HitTimer = 0.1;
+                    player.rotateBy(-10);
+                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 needle.removeFromWorld();
             }
         }
 
-        if (needleHit) {
-            needleTimer -= tpf;
-            if (needleTimer <= 0) {
-                needleHit = false;
+        for (Entity vomit : new ArrayList<>(vomits)) {
+            if (player.distance(vomit) < 56) {
+                if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                    player.rotateBy(70);
+                    Hit = true;
+                    HitTimer = 2;
+                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                }
+                vomit.removeFromWorld();
             }
         }
+
+        for (Entity bottle : new ArrayList<>(bottles)) {
+            if (player.distance(bottle) < 56) {
+                if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                    player.getComponent(EffectComponent.class).spawnBloodEffect();
+                    Hit = true;
+                    HitTimer = 2;
+                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                }
+                bottle.removeFromWorld();
+            }
+        }
+        if(Hit){
+            player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+        }
+        HitTimer -= tpf;
+        if (HitTimer <= 0) {
+            Hit = false;
+        }
+
     }
 
     public boolean isOnTrack(double x, double y) {
