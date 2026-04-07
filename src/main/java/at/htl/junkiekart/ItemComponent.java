@@ -1,6 +1,7 @@
 package at.htl.junkiekart;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.KeyCode;
@@ -17,6 +18,9 @@ public class ItemComponent extends Component {
 
     //pilz
     private boolean invincible = false;
+
+    //Bier
+    private int beerCounter = 0;
 
     //Algemain
     private double timer = 0;
@@ -43,12 +47,18 @@ public class ItemComponent extends Component {
             case Benutzte_Nadel -> spawnNadel();
             case Kokain ->  doCokain();
             case Shroom ->   eatShroom();
+            case Beer_Bottle -> throwBottle();
         }
         heldItem = null;
     }
 
     private void spawnNadel() {
-        FXGL.spawn("Nadel", entity.getX()-50, entity.getY()-50);
+        double angleRad = Math.toRadians(entity.getRotation());
+        double offsetX = Math.sin(angleRad) * 60;
+        double offsetY = -Math.cos(angleRad) * 60;
+
+        FXGL.spawn("Nadel", new SpawnData(entity.getX() - offsetX, entity.getY() - offsetY)
+                .put("type", "Nadel"));
     }
 
     private void doCokain()  {
@@ -72,6 +82,17 @@ public class ItemComponent extends Component {
         entity.getComponent(EffectComponent.class).spawnShroomEffect(true);
     }
 
+    private void throwBottle() {
+        beerCounter++;
+        double angleRad = Math.toRadians(entity.getRotation());
+        double offsetX = Math.sin(angleRad) * 60;
+        double offsetY = -Math.cos(angleRad) * 60;
+
+        SpawnData data = new SpawnData(entity.getX() + offsetX, entity.getY() + offsetY);
+        data.put("angleRad", angleRad);
+        FXGL.spawn("Bottle", data);
+    }
+
     @Override
     public void onUpdate(double tpf) {
         //Kokain Code
@@ -84,14 +105,25 @@ public class ItemComponent extends Component {
                 kActive = false;
             }
         }
-        //Pilz Code
 
+        //Pilz Code
         if(invincible == true){
             timer -= tpf;
             if(timer <= 0){
                 entity.getComponent(EffectComponent.class).spawnShroomEffect(false);
                 invincible = false;
             }
+        }
+
+        //Bier Code
+        if(beerCounter >= 1){
+            beerCounter = 0;
+
+            double angleRad = Math.toRadians(entity.getRotation());
+            double offsetX = Math.sin(angleRad) * 60;
+            double offsetY = -Math.cos(angleRad) * 60;
+
+            FXGL.spawn("Vomit", new SpawnData(entity.getX() - offsetX, entity.getY() - offsetY));
         }
     }
 

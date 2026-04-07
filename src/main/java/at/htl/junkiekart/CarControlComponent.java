@@ -10,8 +10,8 @@ public class CarControlComponent extends Component {
     private double currentSpeed = 0;
 
     private double maxSpeed = 12;
-    private double acceleration = 1;
-    private double turnSpeed = 5;
+    private double acceleration = 0.8;
+    private double turnSpeed = 7;
     private double drift = 0.95;
     private double friction = 0.93;
     private double driftFriction = 0.98;

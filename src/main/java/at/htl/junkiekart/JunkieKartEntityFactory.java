@@ -69,6 +69,44 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("Vomit")
+    public Entity newVomit(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/vomit.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+
+        imageView.setFitWidth(72);
+        imageView.setFitHeight(72);
+        imageView.setPreserveRatio(true);
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.VOMIT)
+                .view(imageView)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("Bottle")
+    public Entity newBottle(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/bottle.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+
+        imageView.setFitWidth(56);
+        imageView.setFitHeight(56);
+        imageView.setPreserveRatio(true);
+
+        double angleRad = data.hasKey("angleRad") ? (double) data.get("angleRad") : 0.0;
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.BOTTLE)
+                .view(imageView)
+                .anchorFromCenter()
+                .with(new BottleMovementComponent(angleRad))
+                .build();
+    }
+
+
     @Spawns("map1")
     public Entity newTestMap(SpawnData data) {
         var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
