@@ -36,6 +36,14 @@ public class ItemComponent extends Component {
     public void giveItem(ItemType item) {
         if (heldItem == null){
             heldItem = item;
+            FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
+
+            try {
+                FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
+                System.out.println("Property gesetzt auf: " + heldItem.name()); // DEBUG
+            } catch (Exception e) {
+                System.out.println("Property FEHLER: " + e.getMessage()); // DEBUG
+            }
         }
     }
 
@@ -50,6 +58,8 @@ public class ItemComponent extends Component {
             case Beer_Bottle -> throwBottle();
         }
         heldItem = null;
+        FXGL.getWorldProperties().setValue("heldItem", "none");
+
     }
 
     private void spawnNadel() {

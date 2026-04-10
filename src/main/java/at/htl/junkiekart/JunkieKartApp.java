@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
+
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
@@ -21,6 +22,68 @@ public class JunkieKartApp extends GameApplication {
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
+    private javafx.scene.image.ImageView itemIconView;
+
+    private void ItemUI() {
+        javafx.scene.shape.Rectangle frame = new javafx.scene.shape.Rectangle(80, 80);
+        frame.setFill(javafx.scene.paint.Color.web("#0f0f0f", 0.7));
+        frame.setStroke(javafx.scene.paint.Color.web("#00ffcc"));
+        frame.setStrokeWidth(2);
+        frame.setArcWidth(12);
+        frame.setArcHeight(12);
+
+        javafx.scene.control.Label label = new javafx.scene.control.Label("ITEM");
+        label.setTextFill(javafx.scene.paint.Color.web("#00ffcc"));
+        label.setStyle("-fx-font-size: 11px;");
+
+        itemIconView = new javafx.scene.image.ImageView();
+        itemIconView.setFitWidth(56);
+        itemIconView.setFitHeight(56);
+        itemIconView.setPreserveRatio(true);
+
+        javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane(frame, itemIconView);
+
+        javafx.scene.layout.VBox itemBox = new javafx.scene.layout.VBox(4, label, iconPane);
+        itemBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+        //oben rechts
+        itemBox.setTranslateX(FXGL.getAppWidth() - 110);
+        itemBox.setTranslateY(20);
+
+        FXGL.getGameScene().addUINode(itemBox);
+
+        FXGL.getWorldProperties()
+                .addListener("heldItem", (oldVal, newVal) -> {
+                    System.out.println("Listener gefeuert: " + newVal); // DEBUG
+                    updateItemIcon(newVal.toString());
+                });
+
+
+        updateItemIcon("none");
+    }
+    private void updateItemIcon(String held) {
+        System.out.println("updateItemIcon called: " + held); // DEBUG
+        String texturePath = switch (held) {
+            case "Kokain"         -> "/assets/textures/koks.png";
+            case "Benutzte_Nadel" -> "/assets/textures/nadels.png";
+            case "Shroom"         -> "/assets/textures/shrooms.png";
+            case "Beer_Bottle"    -> "/assets/textures/beers.png";
+            default               -> null;
+        };
+
+        System.out.println("texturePath: " + texturePath); // DEBUG
+
+        if (texturePath != null) {
+            var stream = getClass().getResourceAsStream(texturePath);
+            System.out.println("stream: " + stream); // DEBUG — null = Datei nicht gefunden!
+            if (stream != null) {
+                itemIconView.setImage(new javafx.scene.image.Image(stream));
+                return;
+            }
+        }
+        itemIconView.setImage(null);
+    }
+
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -63,7 +126,13 @@ public class JunkieKartApp extends GameApplication {
 
                     collisionImage = collisionView.getImage();
                     reader = collisionImage.getPixelReader();
+                    FXGL.getWorldProperties().setValue("heldItem", "none");
+
                     FXGL.spawn("Player", new SpawnData(200, 540).put("skin", customize[0].getSelectedSkin()));
+
+                    ItemUI();
+
+
                 });
 
                 FXGL.getGameScene().addUINode(customize[0]);
