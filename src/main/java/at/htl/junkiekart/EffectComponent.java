@@ -19,6 +19,7 @@ public class EffectComponent extends Component {
         double angle = backAngle + spread;
         double speed = 30 + Math.random() * 30;
 
+
         double vx = Math.sin(angle) * speed;
         double vy = -Math.cos(angle) * speed;
 
@@ -29,8 +30,8 @@ public class EffectComponent extends Component {
         double oy = -Math.cos(perpAngle) * offset;
 
         if(smokeBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 8, Color.DARKGREY, 0.8);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 8, Color.DARKGREY, 0.8);
+            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 6, Color.DARKGREY, 0.8);
+            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 6, Color.DARKGREY, 0.8);
         }
 
         if(shroomBool){

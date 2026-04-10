@@ -7,6 +7,12 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import javafx.scene.shape.Rectangle;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
+import static javafx.scene.paint.Color.RED;
 
 public class JunkieKartEntityFactory implements EntityFactory {
 
@@ -120,6 +126,16 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .at(0, 0)
                 .view(imageView)
                 .zIndex(-1)
+                .build();
+    }
+
+    @Spawns("checkpoint")
+    public Entity newCheckpoint(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(EntityType.CHECKPOINT)
+                .view(new Rectangle(50, 50, RED)) // width, height, color
+                .anchorFromCenter()
+                .collidable()
                 .build();
     }
 

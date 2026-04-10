@@ -90,9 +90,12 @@ public class JunkieKartApp extends GameApplication {
 
         for (Entity bag : new ArrayList<>(bags)) {
             if (player.distance(bag) < 56) {
-                player.getComponent(ItemComponent.class).giveItem(
-                        ItemType.values()[(int)(Math.random() * ItemType.values().length)]
-                );
+                if(player.getComponent(ItemComponent.class).getHeldItem() == null){
+                    player.getComponent(ItemComponent.class).giveItem(
+                            ItemType.values()[(int)(Math.random() * ItemType.values().length)]
+                    );
+                }
+
                 respawnX += bag.getX();
                 respawnY += bag.getY();
                 Respawn = true;
@@ -102,12 +105,12 @@ public class JunkieKartApp extends GameApplication {
         }
 
         for (Entity needle : new ArrayList<>(needles)) {
-            if (player.distance(needle) < 56) {
+            if (player.distance(needle) < 48) {
                 if (!player.getComponent(ItemComponent.class).getInvincible()) {
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
                     Hit = true;
                     HitTimer = 2;
-                    player.rotateBy(-10);
+                    player.rotateBy((int)(Math.random() * 141) - 70);
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 needle.removeFromWorld();
@@ -117,7 +120,7 @@ public class JunkieKartApp extends GameApplication {
         for (Entity vomit : new ArrayList<>(vomits)) {
             if (player.distance(vomit) < 56) {
                 if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                    player.rotateBy(70);
+                    player.rotateBy((int)(Math.random() * 171) - 85);
                     Hit = true;
                     HitTimer = 0.3;
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
@@ -152,7 +155,6 @@ public class JunkieKartApp extends GameApplication {
             respawnX = 0;
             respawnY = 0;
         }
-
     }
 
     public boolean isOnTrack(double x, double y) {
@@ -167,8 +169,6 @@ public class JunkieKartApp extends GameApplication {
         Color color = reader.getColor((int) px, (int) py);
         return color.getRed() > 0.9; // Weiß = Straße
     }
-
-
 
     public static void main(String[] args) {
         launch(args);

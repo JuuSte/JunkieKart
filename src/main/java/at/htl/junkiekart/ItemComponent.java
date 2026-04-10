@@ -132,4 +132,8 @@ public class ItemComponent extends Component {
     public boolean getInvincible(){
         return invincible;
     }
+
+    public ItemType getHeldItem(){
+        return heldItem;
+    }
 }

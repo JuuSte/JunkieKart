@@ -59,7 +59,6 @@ public class CarControlComponent extends Component {
             @Override
             protected void onAction() {
                 drifting = true;
-                entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
             }
             protected void onActionEnd() {
                 drifting = false;
@@ -82,10 +81,11 @@ public class CarControlComponent extends Component {
 
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
-        if (drifting || dot < 0.99) {
+        if (drifting || dot < 0.99 && currentSpeed > 0.1) {
             dx = dx * drift + targetDx * (1 - drift);
             dy = dy * drift + targetDy * (1 - drift);
             entity.getComponent(SkidMarkComponent.class).setActive(true);
+            entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
         } else {
             dx = targetDx;
             dy = targetDy;
@@ -112,7 +112,6 @@ public class CarControlComponent extends Component {
                 currentSpeed *= 0.5;
                 break;
             } else {
-                // Aktuelle Position auch off-track? Rausschieben
                 if (!app.isOnTrack(entity.getX(), entity.getY())) {
                     entity.translateX(-dx);
                     entity.translateY(-dy);
@@ -135,8 +134,6 @@ public class CarControlComponent extends Component {
         if (currentSpeed > maxSpeed) currentSpeed = currentSpeed * 0.98 + maxSpeed * 0.02;
         if (currentSpeed < -maxSpeed / 3) currentSpeed = currentSpeed * 0.98 + (-maxSpeed / 3) * 0.02;
     }
-
-
 
     public double getMaxSpeed() { return maxSpeed; }
     public void setMaxSpeed(double newMax) { maxSpeed = newMax; }
