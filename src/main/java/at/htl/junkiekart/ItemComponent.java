@@ -15,9 +15,11 @@ public class ItemComponent extends Component {
     private double kDuration = 1.0; // seconds
     private boolean kActive = false;
     private double kBoost = 40.0;
+    private double ktimer;
 
     //pilz
     private boolean invincible = false;
+    private double stimer;
 
     //Bier
     private int beerCounter = 0;
@@ -73,12 +75,12 @@ public class ItemComponent extends Component {
                 entity.getComponent(CarControlComponent.class).getMaxSpeed() + kBoost
         );
         kActive = true;
-        timer = kDuration;
+        ktimer = kDuration;
     }
 
     private void eatShroom(){
         invincible = true;
-        timer = 15;
+        stimer = 6;
         entity.getComponent(EffectComponent.class).spawnShroomEffect(true);
     }
 
@@ -90,15 +92,15 @@ public class ItemComponent extends Component {
 
         SpawnData data = new SpawnData(entity.getX() + offsetX, entity.getY() + offsetY);
         data.put("angleRad", angleRad);
-        FXGL.spawn("Bottle", data);
+        FXGL.spawn("Beer", data);
     }
 
     @Override
     public void onUpdate(double tpf) {
         //Kokain Code
         if (kActive == true) {
-            timer -= tpf;
-            if (timer <= 0) {
+            ktimer -= tpf;
+            if (ktimer <= 0) {
                 entity.getComponent(CarControlComponent.class).setMaxSpeed(
                         entity.getComponent(CarControlComponent.class).getMaxSpeed() - kBoost
                 );
@@ -108,15 +110,15 @@ public class ItemComponent extends Component {
 
         //Pilz Code
         if(invincible == true){
-            timer -= tpf;
-            if(timer <= 0){
+            stimer -= tpf;
+            if(stimer <= 0){
                 entity.getComponent(EffectComponent.class).spawnShroomEffect(false);
                 invincible = false;
             }
         }
 
         //Bier Code
-        if(beerCounter >= 1){
+        if(beerCounter >= 2){
             beerCounter = 0;
 
             double angleRad = Math.toRadians(entity.getRotation());

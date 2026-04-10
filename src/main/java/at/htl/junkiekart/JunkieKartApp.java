@@ -18,9 +18,15 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 public class JunkieKartApp extends GameApplication {
     private boolean Hit = false;
     private double HitTimer;
+
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
+
+    private int respawnX;
+    private int respawnY;
+    private double RespawnTimer;
+    private boolean Respawn;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -42,14 +48,10 @@ public class JunkieKartApp extends GameApplication {
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
 
-                FXGL.spawn("Bag", 600, 300);
-                FXGL.spawn("Bag", 200, 500);
-                FXGL.spawn("Bag", 800, 200);
-                FXGL.spawn("Bag", 600, 800);
-                FXGL.spawn("Nadel", 700, 800);
-                FXGL.spawn("Nadel", 500, 600);
-                FXGL.spawn("Vomit", 1200, 600);
-                FXGL.spawn("Vomit",1400, 400);
+                FXGL.spawn("Bag", 600, 250);
+                FXGL.spawn("Bag", 700, 780);
+                FXGL.spawn("Bag", 1630, 200);
+                FXGL.spawn("Bag", 1200, 645);
 
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
@@ -65,13 +67,10 @@ public class JunkieKartApp extends GameApplication {
                     reader = collisionImage.getPixelReader();
                     FXGL.spawn("Player", new SpawnData(200, 540).put("skin", customize[0].getSelectedSkin()));
                 });
-
                 FXGL.getGameScene().addUINode(customize[0]);
             });
-
             FXGL.getGameScene().addUINode(mapSelect);
         });
-
         FXGL.getGameScene().addUINode(loading);
     }
 
@@ -83,7 +82,7 @@ public class JunkieKartApp extends GameApplication {
         Entity player = players.get(0);
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
-        var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BOTTLE);
+        var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BEER);
         var vomits = FXGL.getGameWorld().getEntitiesByType(EntityType.VOMIT);
 
         player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
@@ -94,6 +93,10 @@ public class JunkieKartApp extends GameApplication {
                 player.getComponent(ItemComponent.class).giveItem(
                         ItemType.values()[(int)(Math.random() * ItemType.values().length)]
                 );
+                respawnX += bag.getX();
+                respawnY += bag.getY();
+                Respawn = true;
+                RespawnTimer = 1;
                 bag.removeFromWorld();
             }
         }
@@ -103,7 +106,7 @@ public class JunkieKartApp extends GameApplication {
                 if (!player.getComponent(ItemComponent.class).getInvincible()) {
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
                     Hit = true;
-                    HitTimer = 0.1;
+                    HitTimer = 2;
                     player.rotateBy(-10);
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
@@ -116,7 +119,7 @@ public class JunkieKartApp extends GameApplication {
                 if(player.getComponent(ItemComponent.class).getInvincible() == false){
                     player.rotateBy(70);
                     Hit = true;
-                    HitTimer = 2;
+                    HitTimer = 0.3;
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 vomit.removeFromWorld();
@@ -140,6 +143,14 @@ public class JunkieKartApp extends GameApplication {
         HitTimer -= tpf;
         if (HitTimer <= 0) {
             Hit = false;
+        }
+
+        RespawnTimer -= tpf;
+        if (RespawnTimer <= 0 && Respawn == true) {
+            Respawn = false;
+            FXGL.spawn("Bag", respawnX, respawnY);
+            respawnX = 0;
+            respawnY = 0;
         }
 
     }

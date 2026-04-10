@@ -14,7 +14,6 @@ public class EffectComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-
         double backAngle = Math.toRadians(entity.getRotation() + 180);
         double spread = Math.toRadians((Math.random() - 0.5) * 2000);
         double angle = backAngle + spread;
@@ -35,8 +34,9 @@ public class EffectComponent extends Component {
         }
 
         if(shroomBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 9, Color.GREEN, 0.4);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 9, Color.PURPLE, 0.4);
+            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTGREEN, 0.3);
+            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 4, Color.LIGHTCORAL, 0.3);
+            spawmMovingDot(entity.getX() - ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTPINK, 0.3);
         }
 
     }
@@ -100,5 +100,6 @@ public class EffectComponent extends Component {
 
     public void spawnShroomEffect(boolean active) {
         shroomBool = active;
+
     }
 }
