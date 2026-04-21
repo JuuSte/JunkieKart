@@ -33,17 +33,18 @@ public class ItemComponent extends Component {
         }, KeyCode.E);
     }
 
+
     public void giveItem(ItemType item) {
         if (heldItem == null){
             heldItem = item;
-            FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
-
-            try {
-                FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
-                System.out.println("Property gesetzt auf: " + heldItem.name()); // DEBUG
-            } catch (Exception e) {
-                System.out.println("Property FEHLER: " + e.getMessage()); // DEBUG
-            }
+//            FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
+//
+//            try {
+//                FXGL.getWorldProperties().setValue("heldItem", heldItem.name());
+//                System.out.println("Property gesetzt auf: " + heldItem.name()); // DEBUG
+//            } catch (Exception e) {
+//                System.out.println("Property FEHLER: " + e.getMessage()); // DEBUG
+//            }
         }
     }
 
@@ -58,7 +59,7 @@ public class ItemComponent extends Component {
             case Beer_Bottle -> throwBottle();
         }
         heldItem = null;
-        FXGL.getWorldProperties().setValue("heldItem", "none");
+//        FXGL.getWorldProperties().setValue("heldItem", "none");
 
     }
 
@@ -139,5 +140,9 @@ public class ItemComponent extends Component {
 
     public boolean getInvincible(){
         return invincible;
+    }
+
+    public ItemType getHeldItem() {
+        return heldItem;
     }
 }

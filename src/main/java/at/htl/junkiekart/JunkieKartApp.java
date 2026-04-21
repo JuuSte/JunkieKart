@@ -24,7 +24,17 @@ public class JunkieKartApp extends GameApplication {
     private PixelReader reader;
     private javafx.scene.image.ImageView itemIconView;
 
+    private Image imgKokain;
+    private Image imgNadel;
+    private Image imgShroom;
+    private Image imgBeer;
+
     private void ItemUI() {
+        imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
+        imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
+        imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
+        imgBeer   = new Image(getClass().getResourceAsStream("/assets/textures/beers.png"));
+
         javafx.scene.shape.Rectangle frame = new javafx.scene.shape.Rectangle(80, 80);
         frame.setFill(javafx.scene.paint.Color.web("#0f0f0f", 0.7));
         frame.setStroke(javafx.scene.paint.Color.web("#00ffcc"));
@@ -42,46 +52,12 @@ public class JunkieKartApp extends GameApplication {
         itemIconView.setPreserveRatio(true);
 
         javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane(frame, itemIconView);
-
         javafx.scene.layout.VBox itemBox = new javafx.scene.layout.VBox(4, label, iconPane);
         itemBox.setAlignment(javafx.geometry.Pos.CENTER);
-
-        //oben rechts
-        itemBox.setTranslateX(FXGL.getAppWidth() - 110);
-        itemBox.setTranslateY(20);
+        itemBox.setTranslateX(20);
+        itemBox.setTranslateY(10);
 
         FXGL.getGameScene().addUINode(itemBox);
-
-        FXGL.getWorldProperties()
-                .addListener("heldItem", (oldVal, newVal) -> {
-                    System.out.println("Listener gefeuert: " + newVal); // DEBUG
-                    updateItemIcon(newVal.toString());
-                });
-
-
-        updateItemIcon("none");
-    }
-    private void updateItemIcon(String held) {
-        System.out.println("updateItemIcon called: " + held); // DEBUG
-        String texturePath = switch (held) {
-            case "Kokain"         -> "/assets/textures/koks.png";
-            case "Benutzte_Nadel" -> "/assets/textures/nadels.png";
-            case "Shroom"         -> "/assets/textures/shrooms.png";
-            case "Beer_Bottle"    -> "/assets/textures/beers.png";
-            default               -> null;
-        };
-
-        System.out.println("texturePath: " + texturePath); // DEBUG
-
-        if (texturePath != null) {
-            var stream = getClass().getResourceAsStream(texturePath);
-            System.out.println("stream: " + stream); // DEBUG — null = Datei nicht gefunden!
-            if (stream != null) {
-                itemIconView.setImage(new javafx.scene.image.Image(stream));
-                return;
-            }
-        }
-        itemIconView.setImage(null);
     }
 
 
@@ -118,21 +94,19 @@ public class JunkieKartApp extends GameApplication {
                 customize[0] = new CustomizeOverlay(mapId, () -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
+
                     ImageView collisionView = new ImageView(
                             new Image(getClass().getResource("/assets/textures/maps/collision.png").toExternalForm())
                     );
                     collisionView.setFitWidth(FXGL.getAppWidth());
                     collisionView.setFitHeight(FXGL.getAppHeight());
-
                     collisionImage = collisionView.getImage();
                     reader = collisionImage.getPixelReader();
-                    FXGL.getWorldProperties().setValue("heldItem", "none");
-
-                    FXGL.spawn("Player", new SpawnData(200, 540).put("skin", customize[0].getSelectedSkin()));
-
-                    ItemUI();
 
 
+                    ItemUI();                                                // 2.
+                    FXGL.spawn("Player", new SpawnData(200, 540)            // 3.
+                            .put("skin", customize[0].getSelectedSkin()));
                 });
 
                 FXGL.getGameScene().addUINode(customize[0]);
@@ -209,6 +183,14 @@ public class JunkieKartApp extends GameApplication {
         HitTimer -= tpf;
         if (HitTimer <= 0) {
             Hit = false;
+        }
+        if (itemIconView != null && !players.isEmpty()) {
+            ItemType held = player.getComponent(ItemComponent.class).getHeldItem();
+            if (held == ItemType.Kokain)          itemIconView.setImage(imgKokain);
+            else if (held == ItemType.Benutzte_Nadel) itemIconView.setImage(imgNadel);
+            else if (held == ItemType.Shroom)     itemIconView.setImage(imgShroom);
+            else if (held == ItemType.Beer_Bottle) itemIconView.setImage(imgBeer);
+            else                                   itemIconView.setImage(null);
         }
 
     }
