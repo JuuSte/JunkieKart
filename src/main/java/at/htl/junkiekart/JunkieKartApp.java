@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
+
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
@@ -22,6 +23,44 @@ public class JunkieKartApp extends GameApplication {
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
+    private javafx.scene.image.ImageView itemIconView;
+
+    private Image imgKokain;
+    private Image imgNadel;
+    private Image imgShroom;
+    private Image imgBeer;
+
+    private void ItemUI() {
+        imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
+        imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
+        imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
+        imgBeer   = new Image(getClass().getResourceAsStream("/assets/textures/beers.png"));
+
+        javafx.scene.shape.Rectangle frame = new javafx.scene.shape.Rectangle(80, 80);
+        frame.setFill(javafx.scene.paint.Color.web("#0f0f0f", 0.7));
+        frame.setStroke(javafx.scene.paint.Color.web("#00ffcc"));
+        frame.setStrokeWidth(2);
+        frame.setArcWidth(12);
+        frame.setArcHeight(12);
+
+        javafx.scene.control.Label label = new javafx.scene.control.Label("ITEM");
+        label.setTextFill(javafx.scene.paint.Color.web("#00ffcc"));
+        label.setStyle("-fx-font-size: 11px;");
+
+        itemIconView = new javafx.scene.image.ImageView();
+        itemIconView.setFitWidth(56);
+        itemIconView.setFitHeight(56);
+        itemIconView.setPreserveRatio(true);
+
+        javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane(frame, itemIconView);
+        javafx.scene.layout.VBox itemBox = new javafx.scene.layout.VBox(4, label, iconPane);
+        itemBox.setAlignment(javafx.geometry.Pos.CENTER);
+        itemBox.setTranslateX(20);
+        itemBox.setTranslateY(10);
+
+        FXGL.getGameScene().addUINode(itemBox);
+    }
+
 
     private int respawnX;
     private int respawnY;
@@ -63,15 +102,19 @@ public class JunkieKartApp extends GameApplication {
                 customize[0] = new CustomizeOverlay(mapId, () -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
+
                     ImageView collisionView = new ImageView(
                             new Image(getClass().getResource("/assets/textures/maps/collision.png").toExternalForm())
                     );
                     collisionView.setFitWidth(FXGL.getAppWidth());
                     collisionView.setFitHeight(FXGL.getAppHeight());
-
                     collisionImage = collisionView.getImage();
                     reader = collisionImage.getPixelReader();
-                    FXGL.spawn("Player", new SpawnData(200, 540).put("skin", customize[0].getSelectedSkin()));
+
+
+                    ItemUI();                                                // 2.
+                    FXGL.spawn("Player", new SpawnData(200, 540)            // 3.
+                            .put("skin", customize[0].getSelectedSkin()));
                 });
                 FXGL.getGameScene().addUINode(customize[0]);
             });
@@ -182,6 +225,14 @@ public class JunkieKartApp extends GameApplication {
         HitTimer -= tpf;
         if (HitTimer <= 0) {
             Hit = false;
+        }
+        if (itemIconView != null && !players.isEmpty()) {
+            ItemType held = player.getComponent(ItemComponent.class).getHeldItem();
+            if (held == ItemType.Kokain)          itemIconView.setImage(imgKokain);
+            else if (held == ItemType.Benutzte_Nadel) itemIconView.setImage(imgNadel);
+            else if (held == ItemType.Shroom)     itemIconView.setImage(imgShroom);
+            else if (held == ItemType.Beer_Bottle) itemIconView.setImage(imgBeer);
+            else                                   itemIconView.setImage(null);
         }
 
         RespawnTimer -= tpf;
