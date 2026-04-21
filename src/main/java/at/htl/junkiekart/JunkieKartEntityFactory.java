@@ -129,11 +129,11 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("checkpoint")
+    @Spawns("Checkpoint")
     public Entity newCheckpoint(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .type(EntityType.CHECKPOINT)
-                .view(new Rectangle(50, 50, RED)) // width, height, color
+                .view(new Rectangle(60, 250, RED)) // width, height, color
                 .anchorFromCenter()
                 .collidable()
                 .build();

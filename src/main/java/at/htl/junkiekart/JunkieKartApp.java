@@ -27,6 +27,9 @@ public class JunkieKartApp extends GameApplication {
     private int respawnY;
     private double RespawnTimer;
     private boolean Respawn;
+    private int location = 0;
+    private int laps = 2;
+    private boolean win = false;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -52,6 +55,9 @@ public class JunkieKartApp extends GameApplication {
                 FXGL.spawn("Bag", 700, 780);
                 FXGL.spawn("Bag", 1630, 200);
                 FXGL.spawn("Bag", 1200, 645);
+                FXGL.spawn("Checkpoint", 240, 60);
+                FXGL.spawn("Checkpoint", 1400, 460);
+                FXGL.spawn("Checkpoint", 600, 620);
 
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
@@ -84,6 +90,7 @@ public class JunkieKartApp extends GameApplication {
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
         var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BEER);
         var vomits = FXGL.getGameWorld().getEntitiesByType(EntityType.VOMIT);
+        var checkpoints = FXGL.getGameWorld().getEntitiesByType(EntityType.CHECKPOINT);
 
         player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
@@ -138,6 +145,35 @@ public class JunkieKartApp extends GameApplication {
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 bottle.removeFromWorld();
+            }
+        }
+        for (Entity checkpoint : new ArrayList<>(checkpoints)) {
+            if (player.distance(checkpoint) < 240) {
+                if(checkpoints.get(0).equals(checkpoint)){
+                    if(location == 2){
+                        laps --;
+                        if(laps == 0){
+                            win = true;
+                            System.out.println("You win!");
+                        }else{
+                            System.out.println("Laps remaining: " + laps);
+                        }
+                        location = 0;
+                        System.out.println("Reset Location = 0");
+                    }if(location == 1){
+                        location = 0;
+                    }
+                }if(checkpoints.get(1).equals(checkpoint)){
+                    if(location == 0){
+                        location = 1;
+                        System.out.println("Location = 1");
+                    }
+                }if(checkpoints.get(2).equals(checkpoint)){
+                    if(location == 1){
+                        location = 2;
+                        System.out.println("Location = 2");
+                    }
+                }
             }
         }
         if(Hit){
