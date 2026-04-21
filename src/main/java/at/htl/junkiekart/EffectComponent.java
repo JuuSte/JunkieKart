@@ -14,11 +14,11 @@ public class EffectComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-
         double backAngle = Math.toRadians(entity.getRotation() + 180);
         double spread = Math.toRadians((Math.random() - 0.5) * 2000);
         double angle = backAngle + spread;
         double speed = 30 + Math.random() * 30;
+
 
         double vx = Math.sin(angle) * speed;
         double vy = -Math.cos(angle) * speed;
@@ -30,13 +30,14 @@ public class EffectComponent extends Component {
         double oy = -Math.cos(perpAngle) * offset;
 
         if(smokeBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 8, Color.DARKGREY, 0.8);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 8, Color.DARKGREY, 0.8);
+            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 6, Color.DARKGREY, 0.8);
+            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 6, Color.DARKGREY, 0.8);
         }
 
         if(shroomBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 9, Color.GREEN, 0.4);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 9, Color.PURPLE, 0.4);
+            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTGREEN, 0.3);
+            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 4, Color.LIGHTCORAL, 0.3);
+            spawmMovingDot(entity.getX() - ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTPINK, 0.3);
         }
 
     }
@@ -100,5 +101,6 @@ public class EffectComponent extends Component {
 
     public void spawnShroomEffect(boolean active) {
         shroomBool = active;
+
     }
 }

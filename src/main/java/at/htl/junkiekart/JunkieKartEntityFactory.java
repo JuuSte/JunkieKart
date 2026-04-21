@@ -7,6 +7,12 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import javafx.scene.shape.Rectangle;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
+import static javafx.scene.paint.Color.RED;
 
 public class JunkieKartEntityFactory implements EntityFactory {
 
@@ -58,8 +64,8 @@ public class JunkieKartEntityFactory implements EntityFactory {
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
-        imageView.setFitWidth(56);
-        imageView.setFitHeight(56);
+        imageView.setFitWidth(48);
+        imageView.setFitHeight(48);
         imageView.setPreserveRatio(true);
 
         return FXGL.entityBuilder(data)
@@ -86,7 +92,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("Bottle")
+    @Spawns("Beer")
     public Entity newBottle(SpawnData data) {
         var stream = getClass().getResourceAsStream("/assets/textures/bottle.png");
         var image = new javafx.scene.image.Image(stream);
@@ -99,7 +105,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
         double angleRad = data.hasKey("angleRad") ? (double) data.get("angleRad") : 0.0;
 
         return FXGL.entityBuilder(data)
-                .type(EntityType.BOTTLE)
+                .type(EntityType.BEER)
                 .view(imageView)
                 .anchorFromCenter()
                 .with(new BottleMovementComponent(angleRad))
@@ -120,6 +126,16 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .at(0, 0)
                 .view(imageView)
                 .zIndex(-1)
+                .build();
+    }
+
+    @Spawns("Checkpoint")
+    public Entity newCheckpoint(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(EntityType.CHECKPOINT)
+                .view(new Rectangle(60, 250, RED)) // width, height, color
+                .anchorFromCenter()
+                .collidable()
                 .build();
     }
 

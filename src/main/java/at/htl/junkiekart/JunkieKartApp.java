@@ -19,6 +19,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 public class JunkieKartApp extends GameApplication {
     private boolean Hit = false;
     private double HitTimer;
+
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
@@ -61,6 +62,14 @@ public class JunkieKartApp extends GameApplication {
     }
 
 
+    private int respawnX;
+    private int respawnY;
+    private double RespawnTimer;
+    private boolean Respawn;
+    private int location = 0;
+    private int laps = 2;
+    private boolean win = false;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Junkie Kart");
@@ -81,14 +90,13 @@ public class JunkieKartApp extends GameApplication {
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
 
-                FXGL.spawn("Bag", 600, 300);
-                FXGL.spawn("Bag", 200, 500);
-                FXGL.spawn("Bag", 800, 200);
-                FXGL.spawn("Bag", 600, 800);
-                FXGL.spawn("Nadel", 700, 800);
-                FXGL.spawn("Nadel", 500, 600);
-                FXGL.spawn("Vomit", 1200, 600);
-                FXGL.spawn("Vomit",1400, 400);
+                FXGL.spawn("Bag", 600, 250);
+                FXGL.spawn("Bag", 700, 780);
+                FXGL.spawn("Bag", 1630, 200);
+                FXGL.spawn("Bag", 1200, 645);
+                FXGL.spawn("Checkpoint", 240, 60);
+                FXGL.spawn("Checkpoint", 1400, 460);
+                FXGL.spawn("Checkpoint", 600, 620);
 
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
@@ -108,13 +116,10 @@ public class JunkieKartApp extends GameApplication {
                     FXGL.spawn("Player", new SpawnData(200, 540)            // 3.
                             .put("skin", customize[0].getSelectedSkin()));
                 });
-
                 FXGL.getGameScene().addUINode(customize[0]);
             });
-
             FXGL.getGameScene().addUINode(mapSelect);
         });
-
         FXGL.getGameScene().addUINode(loading);
     }
 
@@ -126,28 +131,36 @@ public class JunkieKartApp extends GameApplication {
         Entity player = players.get(0);
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
-        var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BOTTLE);
+        var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BEER);
         var vomits = FXGL.getGameWorld().getEntitiesByType(EntityType.VOMIT);
+        var checkpoints = FXGL.getGameWorld().getEntitiesByType(EntityType.CHECKPOINT);
 
         player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
 
         for (Entity bag : new ArrayList<>(bags)) {
             if (player.distance(bag) < 56) {
-                player.getComponent(ItemComponent.class).giveItem(
-                        ItemType.values()[(int)(Math.random() * ItemType.values().length)]
-                );
+                if(player.getComponent(ItemComponent.class).getHeldItem() == null){
+                    player.getComponent(ItemComponent.class).giveItem(
+                            ItemType.values()[(int)(Math.random() * ItemType.values().length)]
+                    );
+                }
+
+                respawnX += bag.getX();
+                respawnY += bag.getY();
+                Respawn = true;
+                RespawnTimer = 1;
                 bag.removeFromWorld();
             }
         }
 
         for (Entity needle : new ArrayList<>(needles)) {
-            if (player.distance(needle) < 56) {
+            if (player.distance(needle) < 48) {
                 if (!player.getComponent(ItemComponent.class).getInvincible()) {
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
                     Hit = true;
-                    HitTimer = 0.1;
-                    player.rotateBy(-10);
+                    HitTimer = 2;
+                    player.rotateBy((int)(Math.random() * 141) - 70);
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 needle.removeFromWorld();
@@ -157,9 +170,9 @@ public class JunkieKartApp extends GameApplication {
         for (Entity vomit : new ArrayList<>(vomits)) {
             if (player.distance(vomit) < 56) {
                 if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                    player.rotateBy(70);
+                    player.rotateBy((int)(Math.random() * 171) - 85);
                     Hit = true;
-                    HitTimer = 2;
+                    HitTimer = 0.3;
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 vomit.removeFromWorld();
@@ -175,6 +188,35 @@ public class JunkieKartApp extends GameApplication {
                     player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
                 }
                 bottle.removeFromWorld();
+            }
+        }
+        for (Entity checkpoint : new ArrayList<>(checkpoints)) {
+            if (player.distance(checkpoint) < 240) {
+                if(checkpoints.get(0).equals(checkpoint)){
+                    if(location == 2){
+                        laps --;
+                        if(laps == 0){
+                            win = true;
+                            System.out.println("You win!");
+                        }else{
+                            System.out.println("Laps remaining: " + laps);
+                        }
+                        location = 0;
+                        System.out.println("Reset Location = 0");
+                    }if(location == 1){
+                        location = 0;
+                    }
+                }if(checkpoints.get(1).equals(checkpoint)){
+                    if(location == 0){
+                        location = 1;
+                        System.out.println("Location = 1");
+                    }
+                }if(checkpoints.get(2).equals(checkpoint)){
+                    if(location == 1){
+                        location = 2;
+                        System.out.println("Location = 2");
+                    }
+                }
             }
         }
         if(Hit){
@@ -193,6 +235,13 @@ public class JunkieKartApp extends GameApplication {
             else                                   itemIconView.setImage(null);
         }
 
+        RespawnTimer -= tpf;
+        if (RespawnTimer <= 0 && Respawn == true) {
+            Respawn = false;
+            FXGL.spawn("Bag", respawnX, respawnY);
+            respawnX = 0;
+            respawnY = 0;
+        }
     }
 
     public boolean isOnTrack(double x, double y) {
@@ -207,8 +256,6 @@ public class JunkieKartApp extends GameApplication {
         Color color = reader.getColor((int) px, (int) py);
         return color.getRed() > 0.9; // Weiß = Straße
     }
-
-
 
     public static void main(String[] args) {
         launch(args);
