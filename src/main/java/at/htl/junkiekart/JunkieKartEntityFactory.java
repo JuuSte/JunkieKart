@@ -53,6 +53,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .type(EntityType.BAG)
                 .view(imageView)
                 .anchorFromCenter()
+                .with(new BagRespawnComponent(data.getX(), data.getY()))
                 .build();
     }
 

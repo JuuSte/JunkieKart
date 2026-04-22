@@ -112,15 +112,26 @@ public class JunkieKartApp extends GameApplication {
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
 
+                if(mapId.equals("map1")){
+                    FXGL.spawn("Bag", 400, 180);
+                    FXGL.spawn("Bag", 1680, 180);
+                    FXGL.spawn("Bag", 1200 , 860);
+                    FXGL.spawn("Bag", 200, 860);
+                    FXGL.spawn("Checkpoint", 880, 70);
+                    FXGL.spawn("Checkpoint", 1500, 750);
+                    FXGL.spawn("Checkpoint", 320, 750);
+                }
+
                 if(mapId.equals("map2")){
-                FXGL.spawn("Bag", 600, 250);
-                FXGL.spawn("Bag", 700, 780);
-                FXGL.spawn("Bag", 1630, 200);
-                FXGL.spawn("Bag", 1200, 645);
-                FXGL.spawn("Checkpoint", 240, 60);
-                FXGL.spawn("Checkpoint", 1400, 460);
-                FXGL.spawn("Checkpoint", 600, 620);
-}
+                    FXGL.spawn("Bag", 600, 250);
+                    FXGL.spawn("Bag", 700, 780);
+                    FXGL.spawn("Bag", 1630, 200);
+                    FXGL.spawn("Bag", 1200, 645);
+                    FXGL.spawn("Checkpoint", 240, 60);
+                    FXGL.spawn("Checkpoint", 1400, 460);
+                    FXGL.spawn("Checkpoint", 600, 620);
+                }
+
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
                     FXGL.getGameScene().clearUINodes();
@@ -164,18 +175,14 @@ public class JunkieKartApp extends GameApplication {
         player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
 
         for (Entity bag : new ArrayList<>(bags)) {
+            if (bag.getX() < 0) continue;
             if (player.distance(bag) < 56) {
                 if(player.getComponent(ItemComponent.class).getHeldItem() == null){
                     player.getComponent(ItemComponent.class).giveItem(
                             ItemType.values()[(int)(Math.random() * ItemType.values().length)]
                     );
                 }
-
-                respawnX += bag.getX();
-                respawnY += bag.getY();
-                Respawn = true;
-                RespawnTimer = 1;
-                bag.removeFromWorld();
+                bag.getComponent(BagRespawnComponent.class).respawnBag(true);
             }
         }
 
@@ -258,14 +265,6 @@ public class JunkieKartApp extends GameApplication {
             else if (held == ItemType.Shroom)     itemIconView.setImage(imgShroom);
             else if (held == ItemType.Beer_Bottle) itemIconView.setImage(imgBeer);
             else                                   itemIconView.setImage(null);
-        }
-
-        RespawnTimer -= tpf;
-        if (RespawnTimer <= 0 && Respawn == true) {
-            Respawn = false;
-            FXGL.spawn("Bag", respawnX, respawnY);
-            respawnX = 0;
-            respawnY = 0;
         }
         if (lapLabel != null) {
             lapLabel.setText("Lap: " + (3 - laps) + "/10");
