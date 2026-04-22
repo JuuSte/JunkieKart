@@ -32,8 +32,6 @@ public class JunkieKartApp extends GameApplication {
     private javafx.scene.control.Label lapLabel;
 
     private void ItemUI() {
-
-
         imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
         imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
         imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
@@ -119,8 +117,6 @@ public class JunkieKartApp extends GameApplication {
                                     getClass().getResourceAsStream("/assets/textures/maps/" + mapId + "_collision.png")
                             )
                     );
-
-
                     collisionView.setFitWidth(FXGL.getAppWidth());
                     collisionView.setFitHeight(FXGL.getAppHeight());
                     collisionImage = collisionView.getImage();
@@ -128,7 +124,7 @@ public class JunkieKartApp extends GameApplication {
 
 
                     ItemUI();                                                // 2.
-                    FXGL.spawn("Player", new SpawnData(200, 540)            // 3.
+                    FXGL.spawn("Player", new SpawnData(180, 140)// 3.
                             .put("skin", customize[0].getSelectedSkin()));
                 });
                 FXGL.getGameScene().addUINode(customize[0]);
@@ -233,7 +229,6 @@ public class JunkieKartApp extends GameApplication {
                     }
                 }
             }
-
         }
         if(Hit){
             player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
