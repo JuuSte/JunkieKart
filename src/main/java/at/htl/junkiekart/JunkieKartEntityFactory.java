@@ -38,6 +38,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .with(new SkidMarkComponent())
                 .with(new CarControlComponent())
                 .with(new ItemComponent())
+                .rotate(90)
                 .build();
     }
 
@@ -112,7 +113,6 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .build();
     }
 
-
     @Spawns("map1")
     public Entity newTestMap(SpawnData data) {
         var stream = getClass().getResourceAsStream("/assets/textures/maps/track.png");
@@ -133,10 +133,10 @@ public class JunkieKartEntityFactory implements EntityFactory {
     public Entity newCheckpoint(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .type(EntityType.CHECKPOINT)
-                .view(new Rectangle(60, 250, RED)) // width, height, color
+                .view(new Rectangle(60, 250, RED))
+                .opacity(0.0)
                 .anchorFromCenter()
                 .collidable()
                 .build();
     }
-
 }

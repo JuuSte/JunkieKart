@@ -89,14 +89,16 @@ public class JunkieKartApp extends GameApplication {
 
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
+                if(mapId.equals("map1")) {
+                    FXGL.spawn("Bag", 600, 250);
+                    FXGL.spawn("Bag", 700, 780);
+                    FXGL.spawn("Bag", 1630, 200);
+                    FXGL.spawn("Bag", 1200, 645);
+                    FXGL.spawn("Checkpoint", 240, 60);
+                    FXGL.spawn("Checkpoint", 1400, 460);
+                    FXGL.spawn("Checkpoint", 600, 620);
+                }
 
-                FXGL.spawn("Bag", 600, 250);
-                FXGL.spawn("Bag", 700, 780);
-                FXGL.spawn("Bag", 1630, 200);
-                FXGL.spawn("Bag", 1200, 645);
-                FXGL.spawn("Checkpoint", 240, 60);
-                FXGL.spawn("Checkpoint", 1400, 460);
-                FXGL.spawn("Checkpoint", 600, 620);
 
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
@@ -113,7 +115,7 @@ public class JunkieKartApp extends GameApplication {
 
 
                     ItemUI();                                                // 2.
-                    FXGL.spawn("Player", new SpawnData(200, 540)            // 3.
+                    FXGL.spawn("Player", new SpawnData(180, 140)// 3.
                             .put("skin", customize[0].getSelectedSkin()));
                 });
                 FXGL.getGameScene().addUINode(customize[0]);

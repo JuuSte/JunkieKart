@@ -32,9 +32,9 @@ public class MapSelectionScreen extends StackPane{
 
         // Map-Karten
         HBox mapsBox = new HBox(40,
-                createMapCard("map1", "Platzhalter 1",   "#ff6b6b", onMapSelected),
-                createMapCard("map2", "Platzhalter 2",  "#ffd93d", onMapSelected),
-                createMapCard("map3", "Platzhalter 3",  "#00ffcc", onMapSelected)
+                createMapCard("map1", "Beginer Map",   "#ff6b6b", onMapSelected),
+                createMapCard("map2", "Expert Map",  "#ffd93d", onMapSelected),
+                createMapCard("map3", "Training Map",  "#00ffcc", onMapSelected)
         );
         mapsBox.setAlignment(Pos.CENTER);
 
