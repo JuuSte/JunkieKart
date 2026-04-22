@@ -22,18 +22,16 @@ public class CustomizeOverlay extends StackPane {
             "pickup_gray.png"
     };
 
-
     private int selectedIndex = 0;
     private ImageView previewView;
 
     public CustomizeOverlay(String mapId, Runnable onDone) {
 
-        Rectangle background = new Rectangle(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0);
-        background.setFill(Color.web("#0f0f0f", 0.75)); //
+        Rectangle background = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
+        background.setFill(Color.web("#0f0f0f", 0.75));
         background.setArcWidth(20);
         background.setArcHeight(20);
 
-        //Titel
         Text title = new Text("CUSTOMIZE KART");
         title.setFont(Font.font("Arial", 52));
         title.setFill(Color.web("#00ffcc"));
@@ -42,14 +40,13 @@ public class CustomizeOverlay extends StackPane {
         glow.setRadius(30);
         title.setEffect(glow);
 
-        // Vorschau
         previewView = new ImageView();
         previewView.setFitWidth(150);
         previewView.setFitHeight(150);
         previewView.setPreserveRatio(true);
         updatePreview();
 
-        // Pfeile zum Durchschalten
+        //Pfeile fürs wechseln
         Button leftBtn = createArrowButton("◀");
         leftBtn.setOnAction(e -> {
             selectedIndex = (selectedIndex - 1 + SKINS.length) % SKINS.length;
@@ -73,7 +70,7 @@ public class CustomizeOverlay extends StackPane {
 
         VBox layout = new VBox(40, title, skinSelector, doneBtn);
         layout.setAlignment(Pos.CENTER);
-        layout.setPrefSize(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0);
+        layout.setPrefSize(FXGL.getAppWidth(), FXGL.getAppHeight());
 
         setAlignment(Pos.TOP_LEFT);
         getChildren().addAll(background, layout);

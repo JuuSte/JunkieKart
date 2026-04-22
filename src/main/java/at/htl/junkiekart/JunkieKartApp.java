@@ -32,6 +32,7 @@ public class JunkieKartApp extends GameApplication {
     private javafx.scene.control.Label lapLabel;
 
     private void ItemUI() {
+        // Die item bilder für die item ui laden
         imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
         imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
         imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
@@ -67,6 +68,19 @@ public class JunkieKartApp extends GameApplication {
         FXGL.getGameScene().addUINode(lapLabel);
 
         FXGL.getGameScene().addUINode(itemBox);
+
+        // Position anzeige um zu testen und zum items einfügen (muss später weg)
+        javafx.scene.control.Label mousePosLabel = new javafx.scene.control.Label("");
+        mousePosLabel.setTextFill(Color.web("#00ffcc"));
+        mousePosLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        mousePosLabel.setTranslateX(800);
+        mousePosLabel.setTranslateY(10);
+
+        FXGL.getGameScene().getRoot().setOnMouseMoved(e -> {
+            mousePosLabel.setText("X: " + (int)e.getX() + "  Y: " + (int)e.getY());
+        });
+
+        FXGL.getGameScene().addUINode(mousePosLabel);
     }
 
 

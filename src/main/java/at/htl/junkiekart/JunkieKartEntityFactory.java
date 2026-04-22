@@ -141,6 +141,21 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .zIndex(-1)
                 .build();
     }
+    @Spawns("map3")
+    public Entity newMap3(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map3.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+        imageView.setFitWidth(FXGL.getAppWidth());
+        imageView.setFitHeight(FXGL.getAppHeight());
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.MAP)
+                .at(0, 0)
+                .view(imageView)
+                .zIndex(-1)
+                .build();
+    }
 
 
     @Spawns("Checkpoint")

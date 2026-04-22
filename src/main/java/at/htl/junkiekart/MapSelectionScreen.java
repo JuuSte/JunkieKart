@@ -15,11 +15,9 @@ import java.util.function.Consumer;
 
 public class MapSelectionScreen extends StackPane{
     public MapSelectionScreen(Consumer<String> onMapSelected){
-        // Hintergrund
         Rectangle background = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
         background.setFill(Color.web("#0f0f0f"));
 
-        // Titel
         Text title = new Text("SELECT MAP");
         title.setFont(Font.font("Arial", 52));
         title.setFill(Color.web("#00ffcc"));
@@ -28,11 +26,11 @@ public class MapSelectionScreen extends StackPane{
         glow.setRadius(30);
         title.setEffect(glow);
 
-        // Map-Karten
+        // Maps
         HBox mapsBox = new HBox(40,
                 createMapCard("map1", "Easy",   "#ff6b6b", onMapSelected),
-                createMapCard("map2", "Hard",  "#ffd93d", onMapSelected)
-                //createMapCard("map3", "Training",  "#00ffcc", onMapSelected)
+                createMapCard("map2", "Hard",  "#ffd93d", onMapSelected),
+                createMapCard("map3", "Training",  "#00ffcc", onMapSelected)
         );
         mapsBox.setAlignment(Pos.CENTER);
 
@@ -66,12 +64,12 @@ public class MapSelectionScreen extends StackPane{
         name.setFont(Font.font("Arial", 22));
         name.setFill(Color.WHITE);
 
-        VBox card = new VBox(15, previewPane, name);  // ← previewPane statt preview
+        VBox card = new VBox(15, previewPane, name);
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-cursor: hand;");
 
         card.setOnMouseEntered(e -> {
-            border.setStrokeWidth(4);  // ← border statt preview
+            border.setStrokeWidth(4);
             DropShadow shadow = new DropShadow();
             shadow.setColor(Color.web(color));
             shadow.setRadius(25);
@@ -80,7 +78,7 @@ public class MapSelectionScreen extends StackPane{
             card.setScaleY(1.05);
         });
         card.setOnMouseExited(e -> {
-            border.setStrokeWidth(2);  // ← border statt preview
+            border.setStrokeWidth(2);
             card.setEffect(null);
             card.setScaleX(1.0);
             card.setScaleY(1.0);
