@@ -66,12 +66,12 @@ public class MapSelectionScreen extends StackPane{
         name.setFont(Font.font("Arial", 22));
         name.setFill(Color.WHITE);
 
-        VBox card = new VBox(15, previewPane, name);  // ← previewPane statt preview
+        VBox card = new VBox(15, previewPane, name);
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-cursor: hand;");
 
         card.setOnMouseEntered(e -> {
-            border.setStrokeWidth(4);  // ← border statt preview
+            border.setStrokeWidth(4);
             DropShadow shadow = new DropShadow();
             shadow.setColor(Color.web(color));
             shadow.setRadius(25);
