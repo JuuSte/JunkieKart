@@ -29,8 +29,11 @@ public class JunkieKartApp extends GameApplication {
     private Image imgNadel;
     private Image imgShroom;
     private Image imgBeer;
+    private javafx.scene.control.Label lapLabel;
 
     private void ItemUI() {
+
+
         imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
         imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
         imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
@@ -57,6 +60,13 @@ public class JunkieKartApp extends GameApplication {
         itemBox.setAlignment(javafx.geometry.Pos.CENTER);
         itemBox.setTranslateX(20);
         itemBox.setTranslateY(10);
+
+        lapLabel = new javafx.scene.control.Label("");
+        lapLabel.setTextFill(javafx.scene.paint.Color.web("#000000"));
+        lapLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        lapLabel.setTranslateX(120);
+        lapLabel.setTranslateY(30);
+        FXGL.getGameScene().addUINode(lapLabel);
 
         FXGL.getGameScene().addUINode(itemBox);
     }
@@ -90,6 +100,7 @@ public class JunkieKartApp extends GameApplication {
             MapSelectionScreen mapSelect = new MapSelectionScreen(mapId -> {
                 FXGL.getGameScene().clearUINodes();
 
+                if(mapId.equals("map2")){
                 FXGL.spawn("Bag", 600, 250);
                 FXGL.spawn("Bag", 700, 780);
                 FXGL.spawn("Bag", 1630, 200);
@@ -97,15 +108,19 @@ public class JunkieKartApp extends GameApplication {
                 FXGL.spawn("Checkpoint", 240, 60);
                 FXGL.spawn("Checkpoint", 1400, 460);
                 FXGL.spawn("Checkpoint", 600, 620);
-
+}
                 CustomizeOverlay[] customize = new CustomizeOverlay[1];
                 customize[0] = new CustomizeOverlay(mapId, () -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
 
                     ImageView collisionView = new ImageView(
-                            new Image(getClass().getResource("/assets/textures/maps/collision.png").toExternalForm())
+                            collisionImage = new Image(
+                                    getClass().getResourceAsStream("/assets/textures/maps/" + mapId + "_collision.png")
+                            )
                     );
+
+
                     collisionView.setFitWidth(FXGL.getAppWidth());
                     collisionView.setFitHeight(FXGL.getAppHeight());
                     collisionImage = collisionView.getImage();
@@ -218,6 +233,7 @@ public class JunkieKartApp extends GameApplication {
                     }
                 }
             }
+
         }
         if(Hit){
             player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
@@ -241,6 +257,9 @@ public class JunkieKartApp extends GameApplication {
             FXGL.spawn("Bag", respawnX, respawnY);
             respawnX = 0;
             respawnY = 0;
+        }
+        if (lapLabel != null) {
+            lapLabel.setText("Lap: " + (3 - laps) + "/10");
         }
     }
 

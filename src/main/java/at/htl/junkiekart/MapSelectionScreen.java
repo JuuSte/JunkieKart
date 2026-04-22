@@ -2,8 +2,6 @@ package at.htl.junkiekart;
 
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -32,9 +30,9 @@ public class MapSelectionScreen extends StackPane{
 
         // Map-Karten
         HBox mapsBox = new HBox(40,
-                createMapCard("map1", "Platzhalter 1",   "#ff6b6b", onMapSelected),
-                createMapCard("map2", "Platzhalter 2",  "#ffd93d", onMapSelected),
-                createMapCard("map3", "Platzhalter 3",  "#00ffcc", onMapSelected)
+                createMapCard("map1", "Easy",   "#ff6b6b", onMapSelected),
+                createMapCard("map2", "Hard",  "#ffd93d", onMapSelected)
+                //createMapCard("map3", "Training",  "#00ffcc", onMapSelected)
         );
         mapsBox.setAlignment(Pos.CENTER);
 
@@ -48,14 +46,13 @@ public class MapSelectionScreen extends StackPane{
     private VBox createMapCard(String mapId, String mapName, String color,
                                java.util.function.Consumer<String> onMapSelected) {
 
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/" + mapId + ".png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(300);
         imageView.setFitHeight(200);
         imageView.setPreserveRatio(true);
 
-        // Rahmen um das Bild
         Rectangle border = new Rectangle(300, 200);
         border.setFill(Color.TRANSPARENT);
         border.setStroke(Color.web(color));

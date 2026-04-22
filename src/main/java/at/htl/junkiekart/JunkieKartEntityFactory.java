@@ -9,9 +9,6 @@ import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
 import static javafx.scene.paint.Color.RED;
 
 public class JunkieKartEntityFactory implements EntityFactory {
@@ -112,10 +109,9 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .build();
     }
 
-
     @Spawns("map1")
-    public Entity newTestMap(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/track.png");
+    public Entity newMap1(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(FXGL.getAppWidth());
@@ -128,6 +124,23 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .zIndex(-1)
                 .build();
     }
+
+    @Spawns("map2")
+    public Entity newMap2(SpawnData data) {
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map2.png");
+        var image = new javafx.scene.image.Image(stream);
+        var imageView = new javafx.scene.image.ImageView(image);
+        imageView.setFitWidth(FXGL.getAppWidth());
+        imageView.setFitHeight(FXGL.getAppHeight());
+
+        return FXGL.entityBuilder(data)
+                .type(EntityType.MAP)
+                .at(0, 0)
+                .view(imageView)
+                .zIndex(-1)
+                .build();
+    }
+
 
     @Spawns("Checkpoint")
     public Entity newCheckpoint(SpawnData data) {
