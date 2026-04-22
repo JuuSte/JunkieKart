@@ -21,15 +21,15 @@ public class JunkieKartEntityFactory implements EntityFactory {
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
-        imageView.setFitWidth(48);
-        imageView.setFitHeight(48);
+        imageView.setFitWidth(72);
+        imageView.setFitHeight(72);
         imageView.setPreserveRatio(true);
-        imageView.setRotate(-90);
+
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.PLAYER)
                 .view(imageView)
-                .bbox(new HitBox(BoundingShape.box(30, 48)))
+                .bbox(new HitBox(BoundingShape.box(72, 72)))
                 .anchorFromCenter()
                 .with(new EffectComponent())
                 .with(new SkidMarkComponent())

@@ -15,11 +15,15 @@ public class CustomizeOverlay extends StackPane {
 
     //in assets/textures/karts/
     private static final String[] SKINS = {
-            "4x4_white.png",
-            "cabrio_red.png",
-            "minicar_black.png",
-            "minicar_blue.png",
-            "pickup_gray.png"
+            "Kart1.png",
+            "Kart2.png",
+            "Kart3.png",
+            "Kart4.png",
+            "Kart5.png",
+            "Kart6.png",
+            "Kart7.png",
+            "Kart8.png",
+            "Kart9.png",
     };
 
     private int selectedIndex = 0;
