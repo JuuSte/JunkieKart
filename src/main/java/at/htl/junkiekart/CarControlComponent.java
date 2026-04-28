@@ -12,7 +12,7 @@ public class CarControlComponent extends Component {
 
     private double maxSpeed = 12;
     private double acceleration = 1;
-    private double turnSpeed = 5;
+    private double turnSpeed = 10;
     private double drift = 0.95;
     private double friction = 0.93;
     private double driftFriction = 0.98;
@@ -23,6 +23,7 @@ public class CarControlComponent extends Component {
     private boolean turnLeft = false;
     private boolean turnRight = false;
     private boolean drifting = false;
+    private boolean hit = false;
 
     @Override
     public void onAdded() {
@@ -30,7 +31,12 @@ public class CarControlComponent extends Component {
         getInput().addAction(new UserAction("Accelerate") {
             @Override
             protected void onAction() {
-                currentSpeed += acceleration;
+                if(hit){
+
+                }else{
+                    currentSpeed += acceleration;
+                }
+
             }
         }, KeyCode.W);
 
@@ -57,7 +63,7 @@ public class CarControlComponent extends Component {
 
         getInput().addAction(new UserAction("Drift") {
             @Override
-            protected void onAction() {
+            protected void onActionBegin() {
                 drifting = true;
             }
             protected void onActionEnd() {
@@ -70,7 +76,13 @@ public class CarControlComponent extends Component {
     public void onUpdate(double tpf) {
         JunkieKartApp app = (JunkieKartApp) FXGL.getApp();
 
-        double rotationAmount = turnSpeed * Math.abs(currentSpeed) / 20.0;
+        double rotationAmount = 0;
+        if (currentSpeed >= 0.15) {
+            double speedFactor = Math.abs(currentSpeed);
+            double baseTurn = turnSpeed / (1.0 + speedFactor * 0.1) * tpf * 60;
+            rotationAmount = drifting ? baseTurn * 1.4 : baseTurn;
+            if (currentSpeed < 0) rotationAmount = -rotationAmount;
+        }
 
         if (turnLeft)  entity.rotateBy(-rotationAmount);
         if (turnRight) entity.rotateBy(rotationAmount);
@@ -79,11 +91,13 @@ public class CarControlComponent extends Component {
         double targetDx = Math.sin(angleRad) * currentSpeed;
         double targetDy = -Math.cos(angleRad) * currentSpeed;
 
+        double activeDrift = drifting ? 0.88 : drift;
+
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
         if (drifting || dot < 0.99 && currentSpeed > 0.1) {
-            dx = dx * drift + targetDx * (1 - drift);
-            dy = dy * drift + targetDy * (1 - drift);
+            dx = dx * activeDrift + targetDx * (1 - activeDrift);
+            dy = dy * activeDrift + targetDy * (1 - activeDrift);
             entity.getComponent(SkidMarkComponent.class).setActive(true);
             entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
         } else {
@@ -139,4 +153,5 @@ public class CarControlComponent extends Component {
     public void setMaxSpeed(double newMax) { maxSpeed = newMax; }
     public double getCurrentSpeed() { return currentSpeed; }
     public void setCurrentSpeed(double newCurrent) { currentSpeed = newCurrent; }
+    public void setHit(boolean newHit) { hit = newHit; }
 }

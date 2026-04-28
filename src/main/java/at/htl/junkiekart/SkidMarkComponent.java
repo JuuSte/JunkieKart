@@ -18,26 +18,24 @@ public class SkidMarkComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        double x = entity.getX();
-        double y = entity.getY();
-        double rearY = entity.getBottomY();
-        double rightX = entity.getRightX();
-
         if (!active) return;
+        double angle = Math.toRadians(entity.getRotation());
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
 
-        timeSinceLastMark += tpf;
-        if (timeSinceLastMark >= 0.001) {
-            timeSinceLastMark = 0;
+        double cx = entity.getX() + entity.getWidth()  / 2.0;
+        double cy = entity.getY() + entity.getHeight() / 2.0;
 
-            double angle = Math.toRadians(entity.getRotation());
+        double insetX = entity.getWidth()  * 0.1;
+        double insetY = entity.getHeight() * 0.1;
+        double hw = entity.getWidth()  / 3.0 - insetX;
+        double hh = entity.getHeight() / 3.0 - insetY;
 
-            spawnMark(entity.getX() + 30 * Math.cos(angle) - 5  * Math.sin(angle), entity.getY() + 30 * Math.sin(angle) + 5  * Math.cos(angle)); // top-right
-            spawnMark(entity.getX() + 12 * Math.cos(angle) - 5  * Math.sin(angle), entity.getY() + 12 * Math.sin(angle) + 5  * Math.cos(angle)); // top-left
-            spawnMark(entity.getX() + 30 * Math.cos(angle) - 30 * Math.sin(angle), entity.getY() + 30 * Math.sin(angle) + 30 * Math.cos(angle)); // bottom-right
-            spawnMark(entity.getX() + 12 * Math.cos(angle) - 30 * Math.sin(angle), entity.getY() + 12 * Math.sin(angle) + 30 * Math.cos(angle)); // bottom-left
-        }
+        spawnMark(cx + (-hw * cos - -hh * sin), cy + (-hw * sin + -hh * cos)); // front-left
+        spawnMark(cx + ( hw * cos - -hh * sin), cy + ( hw * sin + -hh * cos)); // front-right
+        spawnMark(cx + (-hw * cos -  hh * sin), cy + (-hw * sin +  hh * cos)); // rear-left
+        spawnMark(cx + ( hw * cos -  hh * sin), cy + ( hw * sin +  hh * cos)); // rear-right
     }
-
     private void spawnMark(double x, double y) {
         Rectangle rect = new Rectangle(4, 9, Color.BLACK);
 
