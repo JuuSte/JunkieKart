@@ -128,6 +128,13 @@ public class JunkieKartApp extends GameApplication {
                     FXGL.spawn("Checkpoint", 600, 620);
                 }
 
+                if(mapId.equals("map3")){
+                    FXGL.spawn("Bag", 600, 250);
+                    FXGL.spawn("Bag", 700, 780);
+                    FXGL.spawn("Bag", 1630, 200);
+                    FXGL.spawn("Bag", 1200, 645);
+                }
+
                 PlayerSetupScreen setup = new PlayerSetupScreen(configs -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
@@ -186,11 +193,10 @@ public class JunkieKartApp extends GameApplication {
         for (Entity needle : new ArrayList<>(needles)) {
             if (player.distance(needle) < 48) {
                 if (!player.getComponent(ItemComponent.class).getInvincible()) {
-                    player.getComponent(EffectComponent.class).spawnBloodEffect();
-                    Hit = true;
-                    HitTimer = 2;
                     player.rotateBy((int)(Math.random() * 141) - 70);
-                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                    player.getComponent(EffectComponent.class).spawnBloodEffect();
+                    player.getComponent(CarControlComponent.class).setHit(true);
+                    HitTimer = 2;
                 }
                 needle.removeFromWorld();
             }
@@ -200,9 +206,8 @@ public class JunkieKartApp extends GameApplication {
             if (player.distance(vomit) < 56) {
                 if(player.getComponent(ItemComponent.class).getInvincible() == false){
                     player.rotateBy((int)(Math.random() * 171) - 85);
-                    Hit = true;
-                    HitTimer = 0.3;
-                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                    player.getComponent(CarControlComponent.class).setHit(true);
+                    HitTimer = 0.2;
                 }
                 vomit.removeFromWorld();
             }
@@ -211,10 +216,10 @@ public class JunkieKartApp extends GameApplication {
         for (Entity bottle : new ArrayList<>(bottles)) {
             if (player.distance(bottle) < 56) {
                 if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                    player.rotateBy((int)(Math.random() * 161) - 80);
                     player.getComponent(EffectComponent.class).spawnBloodEffect();
-                    Hit = true;
-                    HitTimer = 2;
-                    player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
+                    player.getComponent(CarControlComponent.class).setHit(true);
+                    HitTimer = 2.5;
                 }
                 bottle.removeFromWorld();
             }
@@ -248,12 +253,9 @@ public class JunkieKartApp extends GameApplication {
                 }
             }
         }
-        if(Hit){
-            player.getComponent(CarControlComponent.class).setCurrentSpeed(0);
-        }
         HitTimer -= tpf;
         if (HitTimer <= 0) {
-            Hit = false;
+            player.getComponent(CarControlComponent.class).setHit(false);
         }
         if (itemIconView != null && !players.isEmpty()) {
             ItemType held = player.getComponent(ItemComponent.class).getHeldItem();

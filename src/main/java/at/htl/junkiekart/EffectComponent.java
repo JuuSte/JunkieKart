@@ -30,8 +30,8 @@ public class EffectComponent extends Component {
         double oy = -Math.cos(perpAngle) * offset;
 
         if(smokeBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 6, Color.DARKGREY, 0.8);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 6, Color.DARKGREY, 0.8);
+            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 4, Color.DARKGREY, 0.4);
+            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 4, Color.DARKGREY, 0.4);
         }
 
         if(shroomBool){
