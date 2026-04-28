@@ -15,9 +15,9 @@ public class JunkieKartEntityFactory implements EntityFactory {
 
     @Spawns("Player")
     public Entity newPlayer(SpawnData data) {
-        String skin = data.get("skin");
+        PlayerConfig config = data.get("config");
 
-        var stream = getClass().getResourceAsStream("/assets/textures/karts/" + skin);
+        var stream = getClass().getResourceAsStream("/assets/textures/karts/" + config.defaultSkin);
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
 
@@ -33,8 +33,8 @@ public class JunkieKartEntityFactory implements EntityFactory {
                 .anchorFromCenter()
                 .with(new EffectComponent())
                 .with(new SkidMarkComponent())
-                .with(new CarControlComponent())
-                .with(new ItemComponent())
+                .with(new CarControlComponent(config))
+                .with(new ItemComponent(config))
                 .rotate(90)
                 .build();
     }

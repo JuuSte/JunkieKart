@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 
@@ -83,11 +84,6 @@ public class JunkieKartApp extends GameApplication {
         FXGL.getGameScene().addUINode(mousePosLabel);
     }
 
-
-    private int respawnX;
-    private int respawnY;
-    private double RespawnTimer;
-    private boolean Respawn;
     private int location = 0;
     private int laps = 2;
     private boolean win = false;
@@ -132,8 +128,7 @@ public class JunkieKartApp extends GameApplication {
                     FXGL.spawn("Checkpoint", 600, 620);
                 }
 
-                CustomizeOverlay[] customize = new CustomizeOverlay[1];
-                customize[0] = new CustomizeOverlay(mapId, () -> {
+                PlayerSetupScreen setup = new PlayerSetupScreen(configs -> {
                     FXGL.getGameScene().clearUINodes();
                     FXGL.spawn(mapId);
 
@@ -148,11 +143,13 @@ public class JunkieKartApp extends GameApplication {
                     reader = collisionImage.getPixelReader();
 
 
-                    ItemUI();                                                // 2.
-                    FXGL.spawn("Player", new SpawnData(180, 140)// 3.
-                            .put("skin", customize[0].getSelectedSkin()));
+                    ItemUI();
+                    for (PlayerConfig config : configs) {
+                        FXGL.spawn("Player", new SpawnData(800 + config.playerIndex * 80, 200).put("config", config));
+                    }
+
                 });
-                FXGL.getGameScene().addUINode(customize[0]);
+                FXGL.getGameScene().addUINode(setup);
             });
             FXGL.getGameScene().addUINode(mapSelect);
         });

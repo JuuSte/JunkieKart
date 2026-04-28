@@ -9,6 +9,11 @@ import javafx.scene.input.KeyCode;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
 
 public class ItemComponent extends Component {
+    private final PlayerConfig config;
+
+        public ItemComponent(PlayerConfig config) {
+            this.config = config;
+        }
     private ItemType heldItem = null;
 
     //kokain
@@ -26,10 +31,10 @@ public class ItemComponent extends Component {
 
     @Override
     public void onAdded() {
-        getInput().addAction(new UserAction("Use Item") {
+        getInput().addAction(new UserAction("Use Item" + config.playerIndex) {
             @Override
             protected void onActionBegin() { useItem(); }
-        }, KeyCode.E);
+        }, config.keyItem);
     }
 
 

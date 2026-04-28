@@ -8,6 +8,13 @@ import javafx.scene.input.KeyCode;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
 
 public class CarControlComponent extends Component {
+
+    private final PlayerConfig config;
+
+    public CarControlComponent(PlayerConfig config) {
+        this.config = config;
+    }
+
     private double currentSpeed = 0;
 
     private double maxSpeed = 12;
@@ -27,43 +34,36 @@ public class CarControlComponent extends Component {
     @Override
     public void onAdded() {
 
-        getInput().addAction(new UserAction("Accelerate") {
+        getInput().addAction(new UserAction("Accelerate_" + config.playerIndex) {
             @Override
-            protected void onAction() {
-                currentSpeed += acceleration;
-            }
-        }, KeyCode.W);
+            protected void onAction() { currentSpeed += acceleration; }
+        }, config.keyUp);
 
-        getInput().addAction(new UserAction("Brake") {
+        getInput().addAction(new UserAction("Brake_" + config.playerIndex) {
             @Override
-            protected void onAction() {
-                currentSpeed -= acceleration;
-            }
-        }, KeyCode.S);
+            protected void onAction() { currentSpeed -= acceleration; }
+        }, config.keyDown);
 
-        getInput().addAction(new UserAction("Turn Left") {
+        getInput().addAction(new UserAction("Turn Left_" + config.playerIndex) {
             @Override
             protected void onActionBegin() { turnLeft = true; }
             @Override
             protected void onActionEnd() { turnLeft = false; }
-        }, KeyCode.A);
+        }, config.keyLeft);
 
-        getInput().addAction(new UserAction("Turn Right") {
+        getInput().addAction(new UserAction("Turn Right_" + config.playerIndex) {
             @Override
             protected void onActionBegin() { turnRight = true; }
             @Override
             protected void onActionEnd() { turnRight = false; }
-        }, KeyCode.D);
+        }, config.keyRight);
 
-        getInput().addAction(new UserAction("Drift") {
+        getInput().addAction(new UserAction("Drift_" + config.playerIndex) {
             @Override
-            protected void onAction() {
-                drifting = true;
-            }
-            protected void onActionEnd() {
-                drifting = false;
-            }
-        }, KeyCode.SPACE);
+            protected void onAction() { drifting = true; }
+            @Override
+            protected void onActionEnd() { drifting = false; }
+        }, config.keyDrift);
     }
 
     @Override
