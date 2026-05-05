@@ -96,8 +96,8 @@ public class JunkieKartApp extends GameApplication {
         FXGL.getGameScene().addUINode(mousePosLabel);
     }
 
-    private int location = 0;
-    private int laps = 2;
+    private int location[] = new int[4];
+    private int laps[] = new int[4];
     private boolean win = false;
 
     @Override
@@ -179,108 +179,117 @@ public class JunkieKartApp extends GameApplication {
     protected void onUpdate(double tpf) {
         var players = FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER);
         if (players.isEmpty()) return;
-
-        Entity player = players.get(0);
         var bags = FXGL.getGameWorld().getEntitiesByType(EntityType.BAG);
         var needles = FXGL.getGameWorld().getEntitiesByType(EntityType.NADEL);
         var bottles = FXGL.getGameWorld().getEntitiesByType(EntityType.BEER);
         var vomits = FXGL.getGameWorld().getEntitiesByType(EntityType.VOMIT);
         var checkpoints = FXGL.getGameWorld().getEntitiesByType(EntityType.CHECKPOINT);
 
-        player.setX(Math.clamp(player.getX(), 0, FXGL.getAppWidth()));
-        player.setY(Math.clamp(player.getY(), 0, FXGL.getAppHeight()));
-
         for (Entity bag : new ArrayList<>(bags)) {
             if (bag.getX() < 0) continue;
-            if (player.distance(bag) < 56) {
-                if(player.getComponent(ItemComponent.class).getHeldItem() == null){
-                    player.getComponent(ItemComponent.class).giveItem(
-                            ItemType.values()[(int)(Math.random() * ItemType.values().length)]
-                    );
+            for(Entity player : new ArrayList<>(players)) {
+                if (player.distance(bag) < 56) {
+                    if(player.getComponent(ItemComponent.class).getHeldItem() == null){
+                        player.getComponent(ItemComponent.class).giveItem(
+                                ItemType.values()[(int)(Math.random() * ItemType.values().length)]
+                        );
+                    }
+                    bag.getComponent(BagRespawnComponent.class).respawnBag(true);
                 }
-                bag.getComponent(BagRespawnComponent.class).respawnBag(true);
             }
         }
 
         for (Entity needle : new ArrayList<>(needles)) {
-            if (player.distance(needle) < 48) {
-                if (!player.getComponent(ItemComponent.class).getInvincible()) {
-                    player.rotateBy((int)(Math.random() * 141) - 70);
-                    player.getComponent(EffectComponent.class).spawnBloodEffect();
-                    player.getComponent(CarControlComponent.class).setHit(true);
-                    HitTimer = 2;
+            for(Entity player: new ArrayList<>(players)){
+                if (player.distance(needle) < 48) {
+                    if (!player.getComponent(ItemComponent.class).getInvincible()) {
+                        player.rotateBy((int)(Math.random() * 141) - 70);
+                        player.getComponent(EffectComponent.class).spawnBloodEffect();
+                        player.getComponent(CarControlComponent.class).setHit(true);
+                        HitTimer = 2;
+                    }
+                    needle.removeFromWorld();
                 }
-                needle.removeFromWorld();
             }
+
         }
 
         for (Entity vomit : new ArrayList<>(vomits)) {
-            if (player.distance(vomit) < 56) {
-                if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                    player.rotateBy((int)(Math.random() * 171) - 85);
-                    player.getComponent(CarControlComponent.class).setHit(true);
-                    HitTimer = 0.2;
+            for(Entity player: new ArrayList<>(players)){
+                if (player.distance(vomit) < 56) {
+                    if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                        player.rotateBy((int)(Math.random() * 171) - 85);
+                        player.getComponent(CarControlComponent.class).setHit(true);
+                        HitTimer = 0.2;
+                    }
+                    vomit.removeFromWorld();
                 }
-                vomit.removeFromWorld();
             }
         }
 
         for (Entity bottle : new ArrayList<>(bottles)) {
-            if (player.distance(bottle) < 56) {
-                if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                    player.rotateBy((int)(Math.random() * 161) - 80);
-                    player.getComponent(EffectComponent.class).spawnBloodEffect();
-                    player.getComponent(CarControlComponent.class).setHit(true);
-                    HitTimer = 2.5;
+            for(Entity player: new ArrayList<>(players)){
+                if (player.distance(bottle) < 56) {
+                    if(player.getComponent(ItemComponent.class).getInvincible() == false){
+                        player.rotateBy((int)(Math.random() * 161) - 80);
+                        player.getComponent(EffectComponent.class).spawnBloodEffect();
+                        player.getComponent(CarControlComponent.class).setHit(true);
+                        HitTimer = 2.5;
+                    }
+                    bottle.removeFromWorld();
                 }
-                bottle.removeFromWorld();
             }
         }
+
         for (Entity checkpoint : new ArrayList<>(checkpoints)) {
-            if (player.distance(checkpoint) < 240) {
-                if(checkpoints.get(0).equals(checkpoint)){
-                    if(location == 2){
-                        laps --;
-                        if(laps == 0){
-                            win = true;
-                            System.out.println("You win!");
-                        }else{
-                            System.out.println("Laps remaining: " + laps);
+            for(Entity player: new ArrayList<>(players)){
+                if (player.distance(checkpoint) < 240) {
+                    if(checkpoints.get(0).equals(checkpoint)){
+                        if(location[player.getZIndex()] == 2){
+                            laps[player.getZIndex()] --;
+                            if(laps[player.getZIndex()] == 0){
+                                win = true;
+                                System.out.println("You win!");
+                            }else{
+                                System.out.println("Laps remaining: " + laps);
+                            }
+                            location[player.getZIndex()] = 0;
+                            System.out.println("Reset Location = 0");
+                        }if(location[player.getZIndex()] == 1){
+                            location[player.getZIndex()] = 0;
                         }
-                        location = 0;
-                        System.out.println("Reset Location = 0");
-                    }if(location == 1){
-                        location = 0;
-                    }
-                }if(checkpoints.get(1).equals(checkpoint)){
-                    if(location == 0){
-                        location = 1;
-                        System.out.println("Location = 1");
-                    }
-                }if(checkpoints.get(2).equals(checkpoint)){
-                    if(location == 1){
-                        location = 2;
-                        System.out.println("Location = 2");
+                    }if(checkpoints.get(1).equals(checkpoint)){
+                        if(location[player.getZIndex()] == 0){
+                            location[player.getZIndex()] = 1;
+                            System.out.println("Location = 1");
+                        }
+                    }if(checkpoints.get(2).equals(checkpoint)){
+                        if(location[player.getZIndex()] == 1){
+                            location[player.getZIndex()] = 2;
+                            System.out.println("Location = 2");
+                        }
                     }
                 }
             }
         }
         HitTimer -= tpf;
-        if (HitTimer <= 0) {
-            player.getComponent(CarControlComponent.class).setHit(false);
-        }
-        if (itemIconViews != null && !players.isEmpty()) {
-            for (int i = 0; i < players.size(); i++) {
-                ItemType held = players.get(i).getComponent(ItemComponent.class).getHeldItem();
-                if      (held == ItemType.Kokain)          itemIconViews[i].setImage(imgKokain);
-                else if (held == ItemType.Benutzte_Nadel)  itemIconViews[i].setImage(imgNadel);
-                else if (held == ItemType.Shroom)          itemIconViews[i].setImage(imgShroom);
-                else if (held == ItemType.Beer_Bottle)     itemIconViews[i].setImage(imgBeer);
-                else                                       itemIconViews[i].setImage(null);
+        for(Entity player: new ArrayList<>(players)){
+            if (HitTimer <= 0) {
+                player.getComponent(CarControlComponent.class).setHit(false);
             }
-        }
-        if (lapLabels != null && lapLabels[0] != null) {
-            lapLabels[0].setText("Lap: " + (3 - laps) + "/10");
+            if (itemIconViews != null && !players.isEmpty()) {
+                for (int i = 0; i < players.size(); i++) {
+                    ItemType held = player.getComponent(ItemComponent.class).getHeldItem();
+                    if (held == ItemType.Kokain) itemIconViews[i].setImage(imgKokain);
+                    else if (held == ItemType.Benutzte_Nadel) itemIconViews[i].setImage(imgNadel);
+                    else if (held == ItemType.Shroom) itemIconViews[i].setImage(imgShroom);
+                    else if (held == ItemType.Beer_Bottle) itemIconViews[i].setImage(imgBeer);
+                    else itemIconViews[i].setImage(null);
+                }
+            }
+            if (lapLabels != null) {
+                lapLabels[0].setText("Lap: " + (3 - laps[player.getZIndex()]) + "/10");
+            }
         }
     }
 
