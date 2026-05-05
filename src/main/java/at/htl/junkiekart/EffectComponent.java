@@ -14,30 +14,38 @@ public class EffectComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
+
+        //movement
         double backAngle = Math.toRadians(entity.getRotation() + 180);
         double spread = Math.toRadians((Math.random() - 0.5) * 2000);
         double angle = backAngle + spread;
         double speed = 30 + Math.random() * 30;
 
-
         double vx = Math.sin(angle) * speed;
         double vy = -Math.cos(angle) * speed;
 
-        // perpendicular offset for the two lines
-        double perpAngle = Math.toRadians(entity.getRotation() + 90);
-        double offset = 8;
-        double ox = Math.sin(perpAngle) * offset;
-        double oy = -Math.cos(perpAngle) * offset;
+        //location
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+
+        double cx = entity.getX() + entity.getWidth()  / 2.0;
+        double cy = entity.getY() + entity.getHeight() / 2.0;
+
+        double insetX = entity.getWidth()  * 0.1;
+        double insetY = entity.getHeight() * 0.1;
+        double hw = entity.getWidth()  / 3.0 - insetX;
+        double hh = entity.getHeight() / 3.0 - insetY;
 
         if(smokeBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 4, Color.DARKGREY, 0.4);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 4, Color.DARKGREY, 0.4);
+            spawmMovingDot(cx + (-hw * cos - -hh * sin), cy + (-hw * sin + -hh * cos), vx, vy, 3, Color.DARKGREY, 0.2); // front-left
+            spawmMovingDot(cx + ( hw * cos - -hh * sin), cy + ( hw * sin + -hh * cos), vx, vy, 3, Color.DARKGREY, 0.2);
         }
 
         if(shroomBool){
-            spawmMovingDot(entity.getX() + ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTGREEN, 0.3);
-            spawmMovingDot(entity.getX() - ox, entity.getY() - oy, vx, vy, 4, Color.LIGHTCORAL, 0.3);
-            spawmMovingDot(entity.getX() - ox, entity.getY() + oy, vx, vy, 4, Color.LIGHTPINK, 0.3);
+            spawmMovingDot(cx + (-hw * cos - -hh * sin), cy + (-hw * sin + -hh * cos), vx, vy, 4, Color.LIGHTGREEN, 0.3); // front-left
+            spawmMovingDot(cx + ( hw * cos - -hh * sin), cy + ( hw * sin + -hh * cos), vx, vy, 4, Color.LIGHTCORAL, 0.3);
+            spawmMovingDot(cx + (-hw * cos - hh * sin), cy + (-hw * sin + hh * cos), vx, vy, 4, Color.LIGHTPINK, 0.3);
+            spawmMovingDot(cx + ( hw * cos - hh * sin), cy + ( hw * sin + hh * cos), vx, vy, 4, Color.LIGHTSALMON, 0.3);
         }
 
     }
