@@ -24,51 +24,63 @@ public class JunkieKartApp extends GameApplication {
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
-    private javafx.scene.image.ImageView itemIconView;
+
 
     private Image imgKokain;
     private Image imgNadel;
     private Image imgShroom;
     private Image imgBeer;
-    private javafx.scene.control.Label lapLabel;
 
-    private void ItemUI() {
+
+    private ImageView[] itemIconViews;
+    private javafx.scene.control.Label[] lapLabels;
+    private int playerCount;
+
+    private void ItemUI(int count) {
+        playerCount = count;
         // Die item bilder für die item ui laden
         imgKokain = new Image(getClass().getResourceAsStream("/assets/textures/koks.png"));
         imgNadel  = new Image(getClass().getResourceAsStream("/assets/textures/nadels.png"));
         imgShroom = new Image(getClass().getResourceAsStream("/assets/textures/shrooms.png"));
         imgBeer   = new Image(getClass().getResourceAsStream("/assets/textures/beers.png"));
 
-        javafx.scene.shape.Rectangle frame = new javafx.scene.shape.Rectangle(80, 80);
-        frame.setFill(javafx.scene.paint.Color.web("#0f0f0f", 0.7));
-        frame.setStroke(javafx.scene.paint.Color.web("#00ffcc"));
-        frame.setStrokeWidth(2);
-        frame.setArcWidth(12);
-        frame.setArcHeight(12);
+        itemIconViews = new ImageView[count];
+        lapLabels     = new javafx.scene.control.Label[count];
 
-        javafx.scene.control.Label label = new javafx.scene.control.Label("ITEM");
-        label.setTextFill(javafx.scene.paint.Color.web("#00ffcc"));
-        label.setStyle("-fx-font-size: 11px;");
+        double[] tx = { 20, FXGL.getAppWidth() - 220, 20, FXGL.getAppWidth() - 220 };
+        double[] ty = { 10, 10, FXGL.getAppHeight() - 120, FXGL.getAppHeight() - 120 };
 
-        itemIconView = new javafx.scene.image.ImageView();
-        itemIconView.setFitWidth(56);
-        itemIconView.setFitHeight(56);
-        itemIconView.setPreserveRatio(true);
+        for(int i = 0; i < count; i++) {
+            javafx.scene.shape.Rectangle frame = new javafx.scene.shape.Rectangle(80, 80);
+            frame.setFill(javafx.scene.paint.Color.web("#0f0f0f", 0.7));
+            frame.setStroke(javafx.scene.paint.Color.web("#00ffcc"));
+            frame.setStrokeWidth(2);
+            frame.setArcWidth(12);
+            frame.setArcHeight(12);
 
-        javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane(frame, itemIconView);
-        javafx.scene.layout.VBox itemBox = new javafx.scene.layout.VBox(4, label, iconPane);
-        itemBox.setAlignment(javafx.geometry.Pos.CENTER);
-        itemBox.setTranslateX(20);
-        itemBox.setTranslateY(10);
+            javafx.scene.control.Label label = new javafx.scene.control.Label("ITEM");
+            label.setTextFill(javafx.scene.paint.Color.web("#00ffcc"));
+            label.setStyle("-fx-font-size: 11px;");
 
-        lapLabel = new javafx.scene.control.Label("");
-        lapLabel.setTextFill(javafx.scene.paint.Color.web("#000000"));
-        lapLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        lapLabel.setTranslateX(120);
-        lapLabel.setTranslateY(30);
-        FXGL.getGameScene().addUINode(lapLabel);
+            itemIconViews[i] = new javafx.scene.image.ImageView();
+            itemIconViews[i].setFitWidth(56);
+            itemIconViews[i].setFitHeight(56);
+            itemIconViews[i].setPreserveRatio(true);
 
-        FXGL.getGameScene().addUINode(itemBox);
+            javafx.scene.layout.StackPane iconPane = new javafx.scene.layout.StackPane(frame, itemIconViews[i]);
+
+            //laps
+            lapLabels[i] = new javafx.scene.control.Label("Lap: 0/10");
+            lapLabels[i].setTextFill(javafx.scene.paint.Color.web("#00ffcc"));
+            lapLabels[i].setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+            javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(4, label, iconPane, lapLabels[i]);
+            box.setAlignment(javafx.geometry.Pos.CENTER);
+            box.setTranslateX(tx[i]);
+            box.setTranslateY(ty[i]);
+
+            FXGL.getGameScene().addUINode(box);
+        }
 
         // Position anzeige um zu testen und zum items einfügen (muss später weg)
         javafx.scene.control.Label mousePosLabel = new javafx.scene.control.Label("");
@@ -150,7 +162,7 @@ public class JunkieKartApp extends GameApplication {
                     reader = collisionImage.getPixelReader();
 
 
-                    ItemUI();
+                    ItemUI(configs.size());
                     for (PlayerConfig config : configs) {
                         FXGL.spawn("Player", new SpawnData(800 + config.playerIndex * 80, 200).put("config", config));
                     }
@@ -257,16 +269,18 @@ public class JunkieKartApp extends GameApplication {
         if (HitTimer <= 0) {
             player.getComponent(CarControlComponent.class).setHit(false);
         }
-        if (itemIconView != null && !players.isEmpty()) {
-            ItemType held = player.getComponent(ItemComponent.class).getHeldItem();
-            if (held == ItemType.Kokain)          itemIconView.setImage(imgKokain);
-            else if (held == ItemType.Benutzte_Nadel) itemIconView.setImage(imgNadel);
-            else if (held == ItemType.Shroom)     itemIconView.setImage(imgShroom);
-            else if (held == ItemType.Beer_Bottle) itemIconView.setImage(imgBeer);
-            else                                   itemIconView.setImage(null);
+        if (itemIconViews != null && !players.isEmpty()) {
+            for (int i = 0; i < players.size(); i++) {
+                ItemType held = players.get(i).getComponent(ItemComponent.class).getHeldItem();
+                if      (held == ItemType.Kokain)          itemIconViews[i].setImage(imgKokain);
+                else if (held == ItemType.Benutzte_Nadel)  itemIconViews[i].setImage(imgNadel);
+                else if (held == ItemType.Shroom)          itemIconViews[i].setImage(imgShroom);
+                else if (held == ItemType.Beer_Bottle)     itemIconViews[i].setImage(imgBeer);
+                else                                       itemIconViews[i].setImage(null);
+            }
         }
-        if (lapLabel != null) {
-            lapLabel.setText("Lap: " + (3 - laps) + "/10");
+        if (lapLabels != null && lapLabels[0] != null) {
+            lapLabels[0].setText("Lap: " + (3 - laps) + "/10");
         }
     }
 
