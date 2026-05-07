@@ -104,7 +104,7 @@ public class JunkieKartApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Junkie Kart");
         settings.setWidth(1920);
-        settings.setHeight(1080);
+        settings.setHeight(1088);
 
         settings.setMainMenuEnabled(true);    //Menü aktivieren
         settings.setSceneFactory(new JunkieKartSceneFactory());
@@ -160,10 +160,25 @@ public class JunkieKartApp extends GameApplication {
                     collisionView.setFitHeight(FXGL.getAppHeight());
                     collisionImage = collisionView.getImage();
                     reader = collisionImage.getPixelReader();
+                    System.out.println("collision size: " + collisionImage.getWidth() + "x" + collisionImage.getHeight());
 
 
                     ItemUI(configs.size());
+
+                    for (int i = 0; i < 4; i++) {
+                        laps[i] = 10;
+                        location[i] = 0;
+                    }
+
                     for (PlayerConfig config : configs) {
+                        if(mapId.equals("map1")) {
+                            FXGL.spawn("Player", new SpawnData(800 + config.playerIndex * 80, 200).put("config", config));
+                        } else if(mapId.equals("map2")) {
+                            FXGL.spawn("Player", new SpawnData(80 + config.playerIndex * 80, 170).put("config", config));
+                        } else if(mapId.equals("map3")) {
+                            FXGL.spawn("Player", new SpawnData(800 + config.playerIndex * 80, 300).put("config", config));
+                        }
+                        else
                         FXGL.spawn("Player", new SpawnData(800 + config.playerIndex * 80, 200).put("config", config));
                     }
 
@@ -187,11 +202,11 @@ public class JunkieKartApp extends GameApplication {
 
         for (Entity bag : new ArrayList<>(bags)) {
             if (bag.getX() < 0) continue;
-            for(Entity player : new ArrayList<>(players)) {
+            for (Entity player : new ArrayList<>(players)) {
                 if (player.distance(bag) < 56) {
-                    if(player.getComponent(ItemComponent.class).getHeldItem() == null){
+                    if (player.getComponent(ItemComponent.class).getHeldItem() == null) {
                         player.getComponent(ItemComponent.class).giveItem(
-                                ItemType.values()[(int)(Math.random() * ItemType.values().length)]
+                                ItemType.values()[(int) (Math.random() * ItemType.values().length)]
                         );
                     }
                     bag.getComponent(BagRespawnComponent.class).respawnBag(true);
@@ -200,10 +215,10 @@ public class JunkieKartApp extends GameApplication {
         }
 
         for (Entity needle : new ArrayList<>(needles)) {
-            for(Entity player: new ArrayList<>(players)){
+            for (Entity player : new ArrayList<>(players)) {
                 if (player.distance(needle) < 48) {
                     if (!player.getComponent(ItemComponent.class).getInvincible()) {
-                        player.rotateBy((int)(Math.random() * 141) - 70);
+                        player.rotateBy((int) (Math.random() * 141) - 70);
                         player.getComponent(EffectComponent.class).spawnBloodEffect();
                         player.getComponent(CarControlComponent.class).setHit(true);
                         HitTimer = 2;
@@ -215,10 +230,10 @@ public class JunkieKartApp extends GameApplication {
         }
 
         for (Entity vomit : new ArrayList<>(vomits)) {
-            for(Entity player: new ArrayList<>(players)){
+            for (Entity player : new ArrayList<>(players)) {
                 if (player.distance(vomit) < 56) {
-                    if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                        player.rotateBy((int)(Math.random() * 171) - 85);
+                    if (player.getComponent(ItemComponent.class).getInvincible() == false) {
+                        player.rotateBy((int) (Math.random() * 171) - 85);
                         player.getComponent(CarControlComponent.class).setHit(true);
                         HitTimer = 0.2;
                     }
@@ -228,10 +243,10 @@ public class JunkieKartApp extends GameApplication {
         }
 
         for (Entity bottle : new ArrayList<>(bottles)) {
-            for(Entity player: new ArrayList<>(players)){
+            for (Entity player : new ArrayList<>(players)) {
                 if (player.distance(bottle) < 56) {
-                    if(player.getComponent(ItemComponent.class).getInvincible() == false){
-                        player.rotateBy((int)(Math.random() * 161) - 80);
+                    if (player.getComponent(ItemComponent.class).getInvincible() == false) {
+                        player.rotateBy((int) (Math.random() * 161) - 80);
                         player.getComponent(EffectComponent.class).spawnBloodEffect();
                         player.getComponent(CarControlComponent.class).setHit(true);
                         HitTimer = 2.5;
@@ -242,53 +257,48 @@ public class JunkieKartApp extends GameApplication {
         }
 
         for (Entity checkpoint : new ArrayList<>(checkpoints)) {
-            for(Entity player: new ArrayList<>(players)){
+            for (int i = 0; i < players.size(); i++) {
+                Entity player = players.get(i);
                 if (player.distance(checkpoint) < 240) {
-                    if(checkpoints.get(0).equals(checkpoint)){
-                        if(location[player.getZIndex()] == 2){
-                            laps[player.getZIndex()] --;
-                            if(laps[player.getZIndex()] == 0){
+                    if (checkpoints.get(0).equals(checkpoint)) {
+                        if (location[i] == 2) {
+                            laps[i]--;
+                            if (laps[i] == 0) {
                                 win = true;
                                 System.out.println("You win!");
-                            }else{
-                                System.out.println("Laps remaining: " + laps);
                             }
-                            location[player.getZIndex()] = 0;
-                            System.out.println("Reset Location = 0");
-                        }if(location[player.getZIndex()] == 1){
-                            location[player.getZIndex()] = 0;
+                            location[i] = 0;
                         }
-                    }if(checkpoints.get(1).equals(checkpoint)){
-                        if(location[player.getZIndex()] == 0){
-                            location[player.getZIndex()] = 1;
-                            System.out.println("Location = 1");
-                        }
-                    }if(checkpoints.get(2).equals(checkpoint)){
-                        if(location[player.getZIndex()] == 1){
-                            location[player.getZIndex()] = 2;
-                            System.out.println("Location = 2");
-                        }
+                        if (location[i] == 1) location[i] = 0;
+                    }
+                    if (checkpoints.get(1).equals(checkpoint)) {
+                        if (location[i] == 0) location[i] = 1;
+                    }
+                    if (checkpoints.get(2).equals(checkpoint)) {
+                        if (location[i] == 1) location[i] = 2;
                     }
                 }
             }
         }
         HitTimer -= tpf;
-        for(Entity player: new ArrayList<>(players)){
+        for (int i = 0; i < players.size(); i++) {
+            Entity p = players.get(i);
+
             if (HitTimer <= 0) {
-                player.getComponent(CarControlComponent.class).setHit(false);
+                p.getComponent(CarControlComponent.class).setHit(false);
             }
-            if (itemIconViews != null && !players.isEmpty()) {
-                for (int i = 0; i < players.size(); i++) {
-                    ItemType held = player.getComponent(ItemComponent.class).getHeldItem();
-                    if (held == ItemType.Kokain) itemIconViews[i].setImage(imgKokain);
-                    else if (held == ItemType.Benutzte_Nadel) itemIconViews[i].setImage(imgNadel);
-                    else if (held == ItemType.Shroom) itemIconViews[i].setImage(imgShroom);
-                    else if (held == ItemType.Beer_Bottle) itemIconViews[i].setImage(imgBeer);
-                    else itemIconViews[i].setImage(null);
-                }
+
+            if (itemIconViews != null) {
+                ItemType held = p.getComponent(ItemComponent.class).getHeldItem();
+                if (held == ItemType.Kokain) itemIconViews[i].setImage(imgKokain);
+                else if (held == ItemType.Benutzte_Nadel) itemIconViews[i].setImage(imgNadel);
+                else if (held == ItemType.Shroom) itemIconViews[i].setImage(imgShroom);
+                else if (held == ItemType.Beer_Bottle) itemIconViews[i].setImage(imgBeer);
+                else itemIconViews[i].setImage(null);
             }
+
             if (lapLabels != null) {
-                lapLabels[0].setText("Lap: " + (3 - laps[player.getZIndex()]) + "/10");
+                lapLabels[i].setText("Lap: " + (10 - laps[i]) + "/10");
             }
         }
     }

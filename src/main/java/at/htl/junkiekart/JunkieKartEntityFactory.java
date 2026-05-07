@@ -113,7 +113,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
 
     @Spawns("map1")
     public Entity newMap1(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1_old.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map1.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(FXGL.getAppWidth());
@@ -129,7 +129,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
 
     @Spawns("map2")
     public Entity newMap2(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/map2_old.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map2.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(FXGL.getAppWidth());
@@ -144,7 +144,7 @@ public class JunkieKartEntityFactory implements EntityFactory {
     }
     @Spawns("map3")
     public Entity newMap3(SpawnData data) {
-        var stream = getClass().getResourceAsStream("/assets/textures/maps/map3_old.png");
+        var stream = getClass().getResourceAsStream("/assets/textures/maps/map3.png");
         var image = new javafx.scene.image.Image(stream);
         var imageView = new javafx.scene.image.ImageView(image);
         imageView.setFitWidth(FXGL.getAppWidth());

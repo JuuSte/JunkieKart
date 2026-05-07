@@ -31,10 +31,14 @@ public class ItemComponent extends Component {
 
     @Override
     public void onAdded() {
-        getInput().addAction(new UserAction("Use Item" + config.playerIndex) {
-            @Override
-            protected void onActionBegin() { useItem(); }
-        }, config.keyItem);
+        try {
+            getInput().addAction(new UserAction("Use Item" + config.playerIndex) {
+                @Override
+                protected void onActionBegin() { useItem(); }
+            }, config.keyItem);
+        } catch (IllegalArgumentException e) {
+
+        }
     }
 
 

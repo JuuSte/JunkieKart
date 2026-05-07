@@ -35,43 +35,64 @@ public class CarControlComponent extends Component {
     @Override
     public void onAdded() {
 
-        getInput().addAction(new UserAction("Accelerate_" + config.playerIndex) {
-            @Override
-            protected void onAction() {
-                if(hit){
+        try {
+            getInput().addAction(new UserAction("Accelerate_" + config.playerIndex) {
+                @Override
+                protected void onAction() {
+                    if (hit) {
 
-                }else{
-                    currentSpeed += acceleration;
+                    } else {
+                        currentSpeed += acceleration;
+                    }
+
+                }
+            }, config.keyUp);
+
+            getInput().addAction(new UserAction("Brake_" + config.playerIndex) {
+                @Override
+                protected void onAction() {
+                    currentSpeed -= acceleration;
+                }
+            }, config.keyDown);
+
+            getInput().addAction(new UserAction("Turn Left_" + config.playerIndex) {
+                @Override
+                protected void onActionBegin() {
+                    turnLeft = true;
                 }
 
-            }
-        }, config.keyUp);
+                @Override
+                protected void onActionEnd() {
+                    turnLeft = false;
+                }
+            }, config.keyLeft);
 
-        getInput().addAction(new UserAction("Brake_" + config.playerIndex) {
-            @Override
-            protected void onAction() { currentSpeed -= acceleration; }
-        }, config.keyDown);
+            getInput().addAction(new UserAction("Turn Right_" + config.playerIndex) {
+                @Override
+                protected void onActionBegin() {
+                    turnRight = true;
+                }
 
-        getInput().addAction(new UserAction("Turn Left_" + config.playerIndex) {
-            @Override
-            protected void onActionBegin() { turnLeft = true; }
-            @Override
-            protected void onActionEnd() { turnLeft = false; }
-        }, config.keyLeft);
+                @Override
+                protected void onActionEnd() {
+                    turnRight = false;
+                }
+            }, config.keyRight);
 
-        getInput().addAction(new UserAction("Turn Right_" + config.playerIndex) {
-            @Override
-            protected void onActionBegin() { turnRight = true; }
-            @Override
-            protected void onActionEnd() { turnRight = false; }
-        }, config.keyRight);
+            getInput().addAction(new UserAction("Drift_" + config.playerIndex) {
+                @Override
+                protected void onActionBegin() {
+                    drifting = true;
+                }
 
-        getInput().addAction(new UserAction("Drift_" + config.playerIndex) {
-            @Override
-            protected void onActionBegin() { drifting = true; }
-            @Override
-            protected void onActionEnd() { drifting = false; }
-        }, config.keyDrift);
+                @Override
+                protected void onActionEnd() {
+                    drifting = false;
+                }
+            }, config.keyDrift);
+        }
+        catch (IllegalArgumentException e) {
+        }
     }
 
     @Override
@@ -115,14 +136,17 @@ public class CarControlComponent extends Component {
         double stepY = dy / steps;
 
         for (int i = 0; i < steps; i++) {
-            if (app.isOnTrack(entity.getX() + stepX, entity.getY() + stepY)) {
+            double nx = entity.getX() + stepX;
+            double ny = entity.getY() + stepY;
+
+            if (app.isOnTrack(nx, ny)) {
                 entity.translate(stepX, stepY);
-            } else if (app.isOnTrack(entity.getX() + stepX, entity.getY())) {
+            } else if (app.isOnTrack(nx, entity.getY())) {
                 entity.translateX(stepX);
                 dy *= -0.5;
                 currentSpeed *= 0.5;
                 break;
-            } else if (app.isOnTrack(entity.getX(), entity.getY() + stepY)) {
+            } else if (app.isOnTrack(entity.getX(), ny)) {
                 entity.translateY(stepY);
                 dx *= -0.5;
                 currentSpeed *= 0.5;
