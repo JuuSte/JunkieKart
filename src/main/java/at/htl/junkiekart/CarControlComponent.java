@@ -23,6 +23,7 @@ public class CarControlComponent extends Component {
     private double drift = 0.85;
     private double friction = 0.93;
     private double driftFriction = 0.97;
+    private double driftBlend = 0.85;
 
     private double dx = 0;
     private double dy = 0;
@@ -38,9 +39,9 @@ public class CarControlComponent extends Component {
         getInput().addAction(new UserAction("Accelerate_" + config.playerIndex) {
             @Override
             protected void onAction() {
-                if(hit){
+                if (hit) {
 
-                }else{
+                } else {
                     currentSpeed += acceleration;
                 }
             }
@@ -77,16 +78,7 @@ public class CarControlComponent extends Component {
     public void onUpdate(double tpf) {
         JunkieKartApp app = (JunkieKartApp) FXGL.getApp();
 
-        double rotationAmount = 0;
-        if (currentSpeed >= 2.5 || currentSpeed <= -2.5) {
-            double speedFactor = Math.abs(currentSpeed);
-            double baseTurn = turnSpeed / (1.0 + speedFactor * 0.1) * tpf * 60;
-            rotationAmount = drifting ? baseTurn * 2.2 : baseTurn;
-        }
-
-        if (turnLeft)  entity.rotateBy(-rotationAmount);
-        if (turnRight) entity.rotateBy(rotationAmount);
-
+        // Compute dot from last frame's dx/dy before rotating
         double angleRad = Math.toRadians(entity.getRotation());
         double targetDx = Math.sin(angleRad) * currentSpeed;
         double targetDy = -Math.cos(angleRad) * currentSpeed;
@@ -94,20 +86,40 @@ public class CarControlComponent extends Component {
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
 
-        double activeDrift = (drifting || dot < 0.99) ? 0.97 : drift;
+        boolean isDrifting = drifting || (dot < 0.99 && currentSpeed > 0.1);
 
-        if (drifting || dot < 0.99 && currentSpeed > 0.1) {
-            dx = dx * activeDrift + targetDx * (1 - activeDrift);
-            dy = dy * activeDrift + targetDy * (1 - activeDrift);
+        // Rotate
+        double rotationAmount = 0;
+        if (currentSpeed >= 2.5 || currentSpeed <= -2.5) {
+            double speedFactor = Math.abs(currentSpeed);
+            double baseTurn = turnSpeed / (1.0 + speedFactor * 0.1) * tpf * 60;
+            rotationAmount = isDrifting ? baseTurn * 2.2 : baseTurn;
+        }
+
+        if (turnLeft)  entity.rotateBy(-rotationAmount);
+        if (turnRight) entity.rotateBy(rotationAmount);
+
+        // Recompute target after rotation
+        angleRad = Math.toRadians(entity.getRotation());
+        targetDx = Math.sin(angleRad) * currentSpeed;
+        targetDy = -Math.cos(angleRad) * currentSpeed;
+
+        // Smoothly interpolate driftBlend so entry and exit feel gradual
+        double targetBlend = isDrifting ? 0.97 : 0.85;
+        double interpSpeed = isDrifting ? 0.08 : 0.25;
+        driftBlend += (targetBlend - driftBlend) * interpSpeed;
+
+        if (isDrifting || driftBlend > 0.90) {
+            dx = dx * driftBlend + targetDx * (1 - driftBlend);
+            dy = dy * driftBlend + targetDy * (1 - driftBlend);
             entity.getComponent(SkidMarkComponent.class).setActive(true);
-            entity.getComponent(EffectComponent.class).spawnSmokeEffect(true);
+            entity.getComponent(EffectComponent.class).spawnSmokeEffect(isDrifting);
         } else {
             dx = targetDx;
             dy = targetDy;
             entity.getComponent(SkidMarkComponent.class).setActive(false);
             entity.getComponent(EffectComponent.class).spawnSmokeEffect(false);
         }
-
 
         int steps = 10;
         double stepX = dx / steps;
@@ -138,7 +150,7 @@ public class CarControlComponent extends Component {
             }
         }
 
-        currentSpeed *= drifting ? driftFriction : friction;
+        currentSpeed *= isDrifting ? driftFriction : friction;
 
         double actualSpeed = Math.sqrt(dx * dx + dy * dy);
         if (actualSpeed > maxSpeed) {
