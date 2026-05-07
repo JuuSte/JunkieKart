@@ -50,12 +50,12 @@ public class ItemComponent extends Component {
         }
         switch (heldItem) {
             case Benutzte_Nadel -> spawnNadel();
-            case Kokain ->  doCokain();
-            case Shroom ->   eatShroom();
+            case Kokain -> doCokain();
+            case Shroom -> eatShroom();
             case Beer_Bottle -> throwBottle();
         }
         heldItem = null;
-//        FXGL.getWorldProperties().setValue("heldItem", "none");
+//      FXGL.getWorldProperties().setValue("heldItem", "none");
 
     }
 
