@@ -18,9 +18,6 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.texture;
 
 public class JunkieKartApp extends GameApplication {
-    private boolean Hit = false;
-    private double HitTimer;
-
     //collision für map
     private Image collisionImage;
     private PixelReader reader;
@@ -31,6 +28,10 @@ public class JunkieKartApp extends GameApplication {
     private Image imgShroom;
     private Image imgBeer;
 
+    private int location[] = {0, 0, 0, 0}; // 0 = Start/Ziel, 1 = Checkpoint 1, 2 = Checkpoint 2
+    private int laps[] = {0, 0, 0, 0};
+    private boolean win = false;
+    private double HitTimer[] = {0, 0, 0, 0};;
 
     private ImageView[] itemIconViews;
     private javafx.scene.control.Label[] lapLabels;
@@ -96,10 +97,6 @@ public class JunkieKartApp extends GameApplication {
         FXGL.getGameScene().addUINode(mousePosLabel);
     }
 
-    private int location[] = new int[4];
-    private int laps[] = new int[4];
-    private boolean win = false;
-
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Junkie Kart");
@@ -124,7 +121,6 @@ public class JunkieKartApp extends GameApplication {
                     FXGL.spawn("Bag", 400, 180);
                     FXGL.spawn("Bag", 1680, 180);
                     FXGL.spawn("Bag", 1200 , 860);
-                    FXGL.spawn("Bag", 200, 860);
                     FXGL.spawn("Checkpoint", 880, 70);
                     FXGL.spawn("Checkpoint", 1500, 750);
                     FXGL.spawn("Checkpoint", 320, 750);
@@ -132,7 +128,7 @@ public class JunkieKartApp extends GameApplication {
 
                 if(mapId.equals("map2")){
                     FXGL.spawn("Bag", 600, 250);
-                    FXGL.spawn("Bag", 700, 780);
+                    FXGL.spawn("Bag", 420, 970);
                     FXGL.spawn("Bag", 1630, 200);
                     FXGL.spawn("Bag", 1200, 645);
                     FXGL.spawn("Checkpoint", 240, 60);
@@ -221,7 +217,7 @@ public class JunkieKartApp extends GameApplication {
                         player.rotateBy((int) (Math.random() * 141) - 70);
                         player.getComponent(EffectComponent.class).spawnBloodEffect();
                         player.getComponent(CarControlComponent.class).setHit(true);
-                        HitTimer = 2;
+                        HitTimer[players.indexOf(player)] = 2;
                     }
                     needle.removeFromWorld();
                 }
@@ -235,7 +231,7 @@ public class JunkieKartApp extends GameApplication {
                     if (player.getComponent(ItemComponent.class).getInvincible() == false) {
                         player.rotateBy((int) (Math.random() * 171) - 85);
                         player.getComponent(CarControlComponent.class).setHit(true);
-                        HitTimer = 0.2;
+                        HitTimer[players.indexOf(player)] = 0.2;
                     }
                     vomit.removeFromWorld();
                 }
@@ -249,7 +245,7 @@ public class JunkieKartApp extends GameApplication {
                         player.rotateBy((int) (Math.random() * 161) - 80);
                         player.getComponent(EffectComponent.class).spawnBloodEffect();
                         player.getComponent(CarControlComponent.class).setHit(true);
-                        HitTimer = 2.5;
+                        HitTimer[players.indexOf(player)] = 2.5;
                     }
                     bottle.removeFromWorld();
                 }
@@ -280,13 +276,16 @@ public class JunkieKartApp extends GameApplication {
                 }
             }
         }
-        HitTimer -= tpf;
+
+        for(int i = 0; i < HitTimer.length; i++){
+            HitTimer[i] -= tpf;
+        }
+
+
+
         for (int i = 0; i < players.size(); i++) {
             Entity p = players.get(i);
 
-            if (HitTimer <= 0) {
-                p.getComponent(CarControlComponent.class).setHit(false);
-            }
 
             if (itemIconViews != null) {
                 ItemType held = p.getComponent(ItemComponent.class).getHeldItem();

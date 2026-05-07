@@ -20,9 +20,9 @@ public class CarControlComponent extends Component {
     private double maxSpeed = 12;
     private double acceleration = 1;
     private double turnSpeed = 8;
-    private double drift = 0.95;
+    private double drift = 0.85;
     private double friction = 0.93;
-    private double driftFriction = 0.98;
+    private double driftFriction = 0.97;
 
     private double dx = 0;
     private double dy = 0;
@@ -100,11 +100,10 @@ public class CarControlComponent extends Component {
         JunkieKartApp app = (JunkieKartApp) FXGL.getApp();
 
         double rotationAmount = 0;
-        if (currentSpeed >= 0.15) {
+        if (currentSpeed >= 2.5 || currentSpeed <= -2.5) {
             double speedFactor = Math.abs(currentSpeed);
             double baseTurn = turnSpeed / (1.0 + speedFactor * 0.1) * tpf * 60;
-            rotationAmount = drifting ? baseTurn * 1.4 : baseTurn;
-            if (currentSpeed < 0) rotationAmount = -rotationAmount;
+            rotationAmount = drifting ? baseTurn * 2.2 : baseTurn;
         }
 
         if (turnLeft)  entity.rotateBy(-rotationAmount);
@@ -114,10 +113,11 @@ public class CarControlComponent extends Component {
         double targetDx = Math.sin(angleRad) * currentSpeed;
         double targetDy = -Math.cos(angleRad) * currentSpeed;
 
-        double activeDrift = drifting ? 0.88 : drift;
-
         double dot = (dx * targetDx + dy * targetDy) /
                 (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(targetDx*targetDx + targetDy*targetDy) + 0.001);
+
+        double activeDrift = (drifting || dot < 0.99) ? 0.97 : drift;
+
         if (drifting || dot < 0.99 && currentSpeed > 0.1) {
             dx = dx * activeDrift + targetDx * (1 - activeDrift);
             dy = dy * activeDrift + targetDy * (1 - activeDrift);

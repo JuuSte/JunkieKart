@@ -47,7 +47,6 @@ public class EffectComponent extends Component {
             spawmMovingDot(cx + (-hw * cos - hh * sin), cy + (-hw * sin + hh * cos), vx, vy, 4, Color.LIGHTPINK, 0.3);
             spawmMovingDot(cx + ( hw * cos - hh * sin), cy + ( hw * sin + hh * cos), vx, vy, 4, Color.LIGHTSALMON, 0.3);
         }
-
     }
 
     private void spawmMovingDot(double x, double y, double vx, double vy, int size, Color color, double duration) {

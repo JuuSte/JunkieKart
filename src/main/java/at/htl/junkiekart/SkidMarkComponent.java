@@ -23,7 +23,7 @@ public class SkidMarkComponent extends Component {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
 
-        double cx = entity.getX() + entity.getWidth()  / 2.0;
+        double cx = entity.getX() + entity.getWidth() / 2.0;
         double cy = entity.getY() + entity.getHeight() / 2.0;
 
         double insetX = entity.getWidth()  * 0.1;
